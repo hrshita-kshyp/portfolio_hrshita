@@ -295,71 +295,148 @@
         border-radius: 50px;
       }
 
-      /* Projects */
-      .projects-grid {
+      /* Projects Gallery - Updated for both sections */
+      .projects-gallery {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-        gap: 3rem;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
       }
 
-      .project-card {
+      .gallery-item {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        aspect-ratio: 4/3;
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 24px;
-        overflow: hidden;
+        transition: all 0.3s ease;
       }
 
-      .project-image {
-        height: 280px;
-        background: rgba(255, 255, 255, 0.03);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 5rem;
-        color: rgba(255, 255, 255, 0.8);
+      .gallery-item:hover {
+        transform: translateY(-10px);
+        border-color: rgba(255, 255, 255, 0.3);
       }
 
-      .project-content {
-        padding: 2.5rem;
+      .gallery-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
       }
 
-      .project-title {
-        font-size: 1.8rem;
-        font-weight: 800;
+      .gallery-item:hover .gallery-image {
+        transform: scale(1.05);
+      }
+
+      .gallery-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.9) 0%,
+          rgba(0, 0, 0, 0.7) 50%,
+          transparent 100%
+        );
+        padding: 2rem;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+      }
+
+      .gallery-item:hover .gallery-overlay {
+        transform: translateY(0);
+      }
+
+      .gallery-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+      }
+
+      .gallery-desc {
+        opacity: 0.8;
+        font-size: 0.9rem;
         margin-bottom: 1rem;
+        line-height: 1.5;
       }
 
-      .project-desc {
-        opacity: 0.7;
+      .gallery-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
         margin-bottom: 1.5rem;
       }
 
-      .project-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-        margin-bottom: 2rem;
-      }
-
-      .project-tag {
-        padding: 0.5rem 1rem;
-        background: rgba(255, 255, 255, 0.05);
+      .gallery-tag {
+        padding: 0.4rem 0.8rem;
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 50px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
       }
 
-      .project-links {
+      .gallery-links {
         display: flex;
-        gap: 1.5rem;
+        gap: 1rem;
       }
 
-      .project-link {
+      .gallery-link {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         color: #fff;
         text-decoration: none;
+        font-size: 0.9rem;
         font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        transition: background 0.3s ease;
+      }
+
+      .gallery-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Website Preview Frames */
+      .website-preview {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .gallery-item:hover .website-preview {
+        opacity: 1;
+      }
+
+      .preview-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.03);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1.2rem;
+      }
+
+      /* Client projects with preview - hide image by default */
+      .client-project .gallery-image {
+        opacity: 0;
+      }
+
+      .client-project .website-preview {
+        opacity: 1; /* Show website preview by default */
+      }
+
+      .client-project:hover .website-preview {
+        opacity: 1; /* Keep it visible on hover */
       }
 
       /* Contact */
@@ -618,16 +695,16 @@
       }
 
       /* Chatbot Message Content */
-      /* Chatbot Message Content */
       .message-content {
         padding: 0.8rem 1rem;
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.05);
-        font-size: 1rem; /* Adjust font size as needed */
-        white-space: normal; /* Allow normal wrapping */
-        overflow-wrap: break-word; /* Break long words */
-        width: auto; /* Allow width to adjust based on content */
+        font-size: 1rem;
+        white-space: normal;
+        overflow-wrap: break-word;
+        width: auto;
       }
+
       .chatbot-messages {
         flex: 1;
         padding: 1rem;
@@ -737,13 +814,28 @@
         .contact-container,
         .card-3d-container,
         .skills-grid,
-        .projects-grid {
+        .projects-gallery {
           grid-template-columns: 1fr;
         }
         .chatbot-container {
           bottom: 90px;
           height: calc(100vh - 120px);
           max-height: 500px;
+        }
+        .gallery-overlay {
+          transform: translateY(0);
+          background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.95) 0%,
+            rgba(0, 0, 0, 0.7) 50%,
+            transparent 100%
+          );
+        }
+        .website-preview {
+          display: none; /* Hide iframes on mobile for better performance */
+        }
+        .client-project .gallery-image {
+          opacity: 1; /* Show images on mobile since iframes are hidden */
         }
       }
     </style>
@@ -889,82 +981,230 @@
           <div class="section-tag">Portfolio</div>
           <h2 class="section-title">Featured Work</h2>
         </div>
-        <div class="projects-grid">
-          <div class="project-card">
-            <div class="project-image"><i class="fas fa-brain"></i></div>
-            <div class="project-content">
-              <h3 class="project-title">AI Content Ecosystem</h3>
-              <p class="project-desc">
+
+        <!-- Featured Work Gallery -->
+        <div class="projects-gallery">
+          <div class="gallery-item">
+            <img
+              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="AI Content Ecosystem"
+              class="gallery-image"
+            />
+            <div class="gallery-overlay">
+              <h3 class="gallery-title">AI Content Ecosystem</h3>
+              <p class="gallery-desc">
                 Strategic content intelligence platform with AI-powered
-                analytics.
+                analytics and automated content generation.
               </p>
-              <div class="project-tags">
-                <span class="project-tag">React</span>
-                <span class="project-tag">Node.js</span>
-                <span class="project-tag">AI</span>
+              <div class="gallery-tags">
+                <span class="gallery-tag">React</span>
+                <span class="gallery-tag">Node.js</span>
+                <span class="gallery-tag">AI</span>
+                <span class="gallery-tag">MongoDB</span>
               </div>
-              <div class="project-links">
+              <div class="gallery-links">
                 <a
                   href="https://github.com/hrshita-kshyp/AI-Content-Studio"
                   target="_blank"
-                  class="project-link"
+                  class="gallery-link"
                 >
-                  <i class="fab fa-github"></i><span>Code</span>
+                  <i class="fab fa-github"></i>
+                  <span>Code</span>
                 </a>
                 <a
                   href="https://ai-content-studio-one.vercel.app/"
                   target="_blank"
-                  class="project-link"
+                  class="gallery-link"
                 >
-                  <i class="fas fa-external-link-alt"></i><span>Live</span>
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Live</span>
                 </a>
               </div>
             </div>
           </div>
-          <div class="project-card">
-            <div class="project-image"><i class="fas fa-car"></i></div>
-            <div class="project-content">
-              <h3 class="project-title">Cab Booking System</h3>
-              <p class="project-desc">
-                Full-stack application with real-time tracking and payment
-                integration.
+
+          <div class="gallery-item">
+            <img
+              src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Cab Booking System"
+              class="gallery-image"
+            />
+            <div class="gallery-overlay">
+              <h3 class="gallery-title">Cab Booking System</h3>
+              <p class="gallery-desc">
+                Full-stack application with real-time tracking, payment
+                integration, and driver-customer matching.
               </p>
-              <div class="project-tags">
-                <span class="project-tag">Angular</span>
-                <span class="project-tag">Node.js</span>
-                <span class="project-tag">MongoDB</span>
+              <div class="gallery-tags">
+                <span class="gallery-tag">Angular</span>
+                <span class="gallery-tag">Node.js</span>
+                <span class="gallery-tag">MongoDB</span>
+                <span class="gallery-tag">WebSockets</span>
               </div>
-              <div class="project-links">
+              <div class="gallery-links">
                 <a
                   href="https://github.com/hrshita-kshyp/Cab-Booking-System"
                   target="_blank"
-                  class="project-link"
+                  class="gallery-link"
                 >
-                  <i class="fab fa-github"></i><span>Code</span>
+                  <i class="fab fa-github"></i>
+                  <span>Code</span>
                 </a>
               </div>
             </div>
           </div>
-          <div class="project-card">
-            <div class="project-image"><i class="fas fa-sync-alt"></i></div>
-            <div class="project-content">
-              <h3 class="project-title">DataSync</h3>
-              <p class="project-desc">
-                Real-time data synchronization platform with automated
-                workflows.
+
+          <div class="gallery-item">
+            <img
+              src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="DataSync"
+              class="gallery-image"
+            />
+            <div class="gallery-overlay">
+              <h3 class="gallery-title">DataSync</h3>
+              <p class="gallery-desc">
+                Real-time data synchronization platform with automated workflows
+                and conflict resolution.
               </p>
-              <div class="project-tags">
-                <span class="project-tag">React</span>
-                <span class="project-tag">WebSockets</span>
-                <span class="project-tag">PostgreSQL</span>
+              <div class="gallery-tags">
+                <span class="gallery-tag">React</span>
+                <span class="gallery-tag">WebSockets</span>
+                <span class="gallery-tag">PostgreSQL</span>
+                <span class="gallery-tag">Redis</span>
               </div>
-              <div class="project-links">
+              <div class="gallery-links">
                 <a
                   href="https://github.com/hrshita-kshyp"
                   target="_blank"
-                  class="project-link"
+                  class="gallery-link"
                 >
-                  <i class="fab fa-github"></i><span>Code</span>
+                  <i class="fab fa-github"></i>
+                  <span>Code</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Client Work Section -->
+        <div class="section-header" style="margin-top: 8rem">
+          <div class="section-tag">Client Work</div>
+          <h2 class="section-title">Real Projects</h2>
+        </div>
+
+        <!-- Client Projects Gallery with Website Previews -->
+        <div class="projects-gallery">
+          <div class="gallery-item client-project">
+            <!-- Static image as fallback (hidden by default) -->
+            <img
+              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Hirvanaa Website"
+              class="gallery-image"
+            />
+            <!-- Website Preview (visible by default) -->
+            <iframe
+              src="https://hirvanaa.netlify.app/"
+              class="website-preview"
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin"
+              title="Hirvanaa Website Preview"
+            ></iframe>
+            <div class="gallery-overlay">
+              <h3 class="gallery-title">Hirvanaa</h3>
+              <p class="gallery-desc">
+                Professional business website with modern design, seamless user
+                experience, and responsive layout.
+              </p>
+              <div class="gallery-tags">
+                <span class="gallery-tag">React</span>
+                <span class="gallery-tag">Tailwind</span>
+                <span class="gallery-tag">Responsive</span>
+                <span class="gallery-tag">Modern UI</span>
+              </div>
+              <div class="gallery-links">
+                <a
+                  href="https://hirvanaa.netlify.app/"
+                  target="_blank"
+                  class="gallery-link"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Live Site</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="gallery-item client-project">
+            <img
+              src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Surya Shine Website"
+              class="gallery-image"
+            />
+            <iframe
+              src="https://surya-shine.vercel.app/"
+              class="website-preview"
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin"
+              title="Surya Shine Website Preview"
+            ></iframe>
+            <div class="gallery-overlay">
+              <h3 class="gallery-title">Surya Shine</h3>
+              <p class="gallery-desc">
+                Elegant website for a cleaning service company with booking
+                functionality and service showcase.
+              </p>
+              <div class="gallery-tags">
+                <span class="gallery-tag">Next.js</span>
+                <span class="gallery-tag">CSS</span>
+                <span class="gallery-tag">Modern</span>
+                <span class="gallery-tag">Booking</span>
+              </div>
+              <div class="gallery-links">
+                <a
+                  href="https://surya-shine.vercel.app/"
+                  target="_blank"
+                  class="gallery-link"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Live Site</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="gallery-item client-project">
+            <img
+              src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+              alt="Peach Icecream Product"
+              class="gallery-image"
+            />
+            <iframe
+              src="https://peach-icecream.vercel.app/"
+              class="website-preview"
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin"
+              title="Peach Icecream Website Preview"
+            ></iframe>
+            <div class="gallery-overlay">
+              <h3 class="gallery-title">Peach Icecream</h3>
+              <p class="gallery-desc">
+                Delicious product landing page with modern design, smooth
+                animations, and engaging user interface.
+              </p>
+              <div class="gallery-tags">
+                <span class="gallery-tag">HTML/CSS</span>
+                <span class="gallery-tag">JavaScript</span>
+                <span class="gallery-tag">Product Page</span>
+                <span class="gallery-tag">Animations</span>
+              </div>
+              <div class="gallery-links">
+                <a
+                  href="https://peach-icecream.vercel.app/"
+                  target="_blank"
+                  class="gallery-link"
+                >
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Live Site</span>
                 </a>
               </div>
             </div>
@@ -1243,7 +1483,7 @@
         skills:
           "Harshita's skills:\n\n💻 Frontend: React, Angular, HTML/CSS, JavaScript, Tailwind\n⚙️ Backend: Node.js, Express, Python, Django\n🗄️ Database: MongoDB, PostgreSQL, MySQL, Firebase\n☁️ DevOps: Docker, AWS, CI/CD, Git",
         projects:
-          "Featured Projects:\n\n🤖 AI Content Ecosystem - AI-powered content platform\n🚗 Cab Booking System - Real-time tracking & payments\n🔄 DataSync - Real-time data synchronization\n\nGitHub: github.com/hrshita-kshyp",
+          "Featured Projects:\n\n🤖 AI Content Ecosystem - AI-powered content platform\n🚗 Cab Booking System - Real-time tracking & payments\n🔄 DataSync - Real-time data synchronization\n\nClient Projects:\n🏢 Hirvanaa - Business website\n✨ Surya Shine - Cleaning service website\n🍑 Peach Icecream - Product landing page\n\nGitHub: github.com/hrshita-kshyp",
         experience:
           "Harshita is a Full Stack Developer at TCS with 1+ years of experience creating modern web applications.",
         contact:

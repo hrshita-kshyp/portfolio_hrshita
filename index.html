@@ -295,10 +295,10 @@
         border-radius: 50px;
       }
 
-      /* Projects Gallery - Updated for both sections */
+      /* Projects Gallery - FIXED FOR MOBILE */
       .projects-gallery {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
         gap: 2rem;
         margin-top: 3rem;
       }
@@ -311,6 +311,7 @@
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
+        width: 100%;
       }
 
       .gallery-item:hover {
@@ -336,13 +337,14 @@
         right: 0;
         background: linear-gradient(
           to top,
-          rgba(0, 0, 0, 0.9) 0%,
+          rgba(0, 0, 0, 0.95) 0%,
           rgba(0, 0, 0, 0.7) 50%,
           transparent 100%
         );
-        padding: 2rem;
+        padding: 1.5rem;
         transform: translateY(100%);
         transition: transform 0.3s ease;
+        overflow: hidden;
       }
 
       .gallery-item:hover .gallery-overlay {
@@ -350,16 +352,21 @@
       }
 
       .gallery-title {
-        font-size: 1.4rem;
+        font-size: clamp(1.2rem, 4vw, 1.4rem);
         font-weight: 700;
         margin-bottom: 0.8rem;
+        line-height: 1.3;
       }
 
       .gallery-desc {
         opacity: 0.8;
-        font-size: 0.9rem;
+        font-size: clamp(0.8rem, 3vw, 0.9rem);
         margin-bottom: 1rem;
         line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
       .gallery-tags {
@@ -373,12 +380,14 @@
         padding: 0.4rem 0.8rem;
         background: rgba(255, 255, 255, 0.1);
         border-radius: 50px;
-        font-size: 0.8rem;
+        font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+        white-space: nowrap;
       }
 
       .gallery-links {
         display: flex;
         gap: 1rem;
+        flex-wrap: wrap;
       }
 
       .gallery-link {
@@ -387,12 +396,15 @@
         gap: 0.5rem;
         color: #fff;
         text-decoration: none;
-        font-size: 0.9rem;
+        font-size: clamp(0.8rem, 3vw, 0.9rem);
         font-weight: 600;
         padding: 0.6rem 1.2rem;
         background: rgba(255, 255, 255, 0.1);
         border-radius: 50px;
         transition: background 0.3s ease;
+        flex: 1;
+        min-width: fit-content;
+        justify-content: center;
       }
 
       .gallery-link:hover {
@@ -804,43 +816,171 @@
         }
       }
 
+      /* MOBILE FIXES - Enhanced for better mobile experience */
       @media (max-width: 768px) {
         nav {
-          padding: 1.5rem 2rem;
+          padding: 1.5rem 1rem;
         }
+        
         .nav-links {
           display: none;
         }
+        
         .contact-container,
         .card-3d-container,
         .skills-grid,
         .projects-gallery {
           grid-template-columns: 1fr;
+          gap: 1.5rem;
         }
+        
         .chatbot-container {
-          bottom: 90px;
-          height: calc(100vh - 120px);
+          bottom: 80px;
+          right: 10px;
+          left: 10px;
+          width: auto;
+          height: calc(100vh - 100px);
           max-height: 500px;
         }
+        
         .gallery-overlay {
           transform: translateY(0);
           background: linear-gradient(
             to top,
             rgba(0, 0, 0, 0.95) 0%,
-            rgba(0, 0, 0, 0.7) 50%,
+            rgba(0, 0, 0, 0.8) 30%,
             transparent 100%
           );
+          padding: 1rem;
         }
+        
         .website-preview {
-          display: none; /* Hide iframes on mobile for better performance */
+          display: none;
         }
+        
         .client-project .gallery-image {
-          opacity: 1; /* Show images on mobile since iframes are hidden */
+          opacity: 1;
+        }
+        
+        section {
+          padding: 4rem 1rem;
+        }
+        
+        .section-header {
+          margin-bottom: 3rem;
+        }
+        
+        .gallery-item {
+          margin-bottom: 1rem;
+        }
+        
+        .gallery-title {
+          font-size: 1.3rem;
+          margin-bottom: 0.5rem;
+        }
+        
+        .gallery-desc {
+          font-size: 0.85rem;
+          margin-bottom: 0.8rem;
+          -webkit-line-clamp: 2;
+        }
+        
+        .gallery-tags {
+          margin-bottom: 1rem;
+          gap: 0.4rem;
+        }
+        
+        .gallery-tag {
+          padding: 0.3rem 0.7rem;
+          font-size: 0.75rem;
+        }
+        
+        .gallery-links {
+          flex-direction: column;
+          gap: 0.8rem;
+        }
+        
+        .gallery-link {
+          padding: 0.8rem 1rem;
+          font-size: 0.9rem;
+          justify-content: center;
+        }
+        
+        .hero {
+          padding: 0 1rem;
+        }
+        
+        .cta-buttons {
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+        
+        .btn {
+          padding: 1rem 2rem;
+          width: 100%;
+          max-width: 280px;
+          justify-content: center;
+        }
+        
+        .contact-form {
+          padding: 2rem;
+        }
+        
+        .card-3d {
+          padding: 2rem;
+        }
+        
+        .skill-card {
+          padding: 2rem;
+        }
+      }
+
+      /* Extra small devices */
+      @media (max-width: 480px) {
+        .projects-gallery {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+        
+        .gallery-overlay {
+          padding: 0.8rem;
+        }
+        
+        .gallery-title {
+          font-size: 1.1rem;
+        }
+        
+        .gallery-desc {
+          font-size: 0.8rem;
+        }
+        
+        .gallery-tag {
+          padding: 0.25rem 0.6rem;
+          font-size: 0.7rem;
+        }
+        
+        .gallery-link {
+          padding: 0.7rem 0.9rem;
+          font-size: 0.85rem;
+        }
+        
+        section {
+          padding: 3rem 1rem;
+        }
+        
+        .hero-title {
+          font-size: clamp(2.5rem, 15vw, 4rem);
+        }
+        
+        .section-title {
+          font-size: clamp(2rem, 10vw, 3rem);
         }
       }
     </style>
   </head>
   <body>
+    <!-- Rest of your HTML remains exactly the same -->
     <div class="cursor"></div>
     <canvas id="canvas3d"></canvas>
 
@@ -981,7 +1121,7 @@
           <div class="section-tag">Portfolio</div>
           <h2 class="section-title">Featured Work</h2>
         </div>
-
+        
         <!-- Featured Work Gallery -->
         <div class="projects-gallery">
           <div class="gallery-item">
@@ -993,8 +1133,7 @@
             <div class="gallery-overlay">
               <h3 class="gallery-title">AI Content Ecosystem</h3>
               <p class="gallery-desc">
-                Strategic content intelligence platform with AI-powered
-                analytics and automated content generation.
+                Strategic content intelligence platform with AI-powered analytics and automated content generation.
               </p>
               <div class="gallery-tags">
                 <span class="gallery-tag">React</span>
@@ -1032,8 +1171,7 @@
             <div class="gallery-overlay">
               <h3 class="gallery-title">Cab Booking System</h3>
               <p class="gallery-desc">
-                Full-stack application with real-time tracking, payment
-                integration, and driver-customer matching.
+                Full-stack application with real-time tracking, payment integration, and driver-customer matching.
               </p>
               <div class="gallery-tags">
                 <span class="gallery-tag">Angular</span>
@@ -1063,8 +1201,7 @@
             <div class="gallery-overlay">
               <h3 class="gallery-title">DataSync</h3>
               <p class="gallery-desc">
-                Real-time data synchronization platform with automated workflows
-                and conflict resolution.
+                Real-time data synchronization platform with automated workflows and conflict resolution.
               </p>
               <div class="gallery-tags">
                 <span class="gallery-tag">React</span>
@@ -1091,7 +1228,7 @@
           <div class="section-tag">Client Work</div>
           <h2 class="section-title">Real Projects</h2>
         </div>
-
+        
         <!-- Client Projects Gallery with Website Previews -->
         <div class="projects-gallery">
           <div class="gallery-item client-project">
@@ -1102,8 +1239,8 @@
               class="gallery-image"
             />
             <!-- Website Preview (visible by default) -->
-            <iframe
-              src="https://hirvanaa.netlify.app/"
+            <iframe 
+              src="https://hirvanaa.netlify.app/" 
               class="website-preview"
               loading="lazy"
               sandbox="allow-scripts allow-same-origin"
@@ -1112,8 +1249,7 @@
             <div class="gallery-overlay">
               <h3 class="gallery-title">Hirvanaa</h3>
               <p class="gallery-desc">
-                Professional business website with modern design, seamless user
-                experience, and responsive layout.
+                Professional business website with modern design, seamless user experience, and responsive layout.
               </p>
               <div class="gallery-tags">
                 <span class="gallery-tag">React</span>
@@ -1140,8 +1276,8 @@
               alt="Surya Shine Website"
               class="gallery-image"
             />
-            <iframe
-              src="https://surya-shine.vercel.app/"
+            <iframe 
+              src="https://surya-shine.vercel.app/" 
               class="website-preview"
               loading="lazy"
               sandbox="allow-scripts allow-same-origin"
@@ -1150,8 +1286,7 @@
             <div class="gallery-overlay">
               <h3 class="gallery-title">Surya Shine</h3>
               <p class="gallery-desc">
-                Elegant website for a cleaning service company with booking
-                functionality and service showcase.
+                Elegant website for a cleaning service company with booking functionality and service showcase.
               </p>
               <div class="gallery-tags">
                 <span class="gallery-tag">Next.js</span>
@@ -1178,8 +1313,8 @@
               alt="Peach Icecream Product"
               class="gallery-image"
             />
-            <iframe
-              src="https://peach-icecream.vercel.app/"
+            <iframe 
+              src="https://peach-icecream.vercel.app/" 
               class="website-preview"
               loading="lazy"
               sandbox="allow-scripts allow-same-origin"
@@ -1188,8 +1323,7 @@
             <div class="gallery-overlay">
               <h3 class="gallery-title">Peach Icecream</h3>
               <p class="gallery-desc">
-                Delicious product landing page with modern design, smooth
-                animations, and engaging user interface.
+                Delicious product landing page with modern design, smooth animations, and engaging user interface.
               </p>
               <div class="gallery-tags">
                 <span class="gallery-tag">HTML/CSS</span>
@@ -1368,8 +1502,7 @@
         </button>
       </div>
     </div>
-
-    <script>
+<script>
       // Cursor
       const cursor = document.querySelector(".cursor");
       let mouseX = 0,
@@ -1766,5 +1899,8 @@
         }
       });
     </script>
+  </body>
+</html>
+    
   </body>
 </html>

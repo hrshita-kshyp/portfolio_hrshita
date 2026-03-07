@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const path = require('path');
+const Groq = require('groq-sdk');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -9,102 +10,105 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Serve static files (images, etc.) from the project root
+app.use(express.static(path.join(__dirname)));
+
 // Logging middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
   next();
 });
 
-// Test route
+// Serve index.html at root
 app.get('/', (req, res) => {
-  res.send('Harshita Portfolio Backend is running! 🚀');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Initialize Groq
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const systemInstruction = `
-Role: You are the personal AI Assistant for Harshita Kashyap, an Integration Specialist and Full Stack Developer.
+const systemPrompt = `You are the personal AI assistant on Harshita Kashyap's portfolio website (hrshita.online).
 
-Knowledge Base:
+About Harshita:
+- Full-stack developer specialising in API integrations, business dashboards, and workflow automation
+- Key skills: React, Node.js, QuickBooks API, Stripe API, Zoho Deluge, REST APIs, OAuth 2.0, MongoDB, AI integrations (Gemini)
+- Built a real QuickBooks Sales Dashboard (called "Sales Alert") for a private client — includes invoice tracking, customer analytics, AI email automation
+- Also built: Invoice Automation Tool, Customer Insights Dashboard, Stripe Payment Manager (all private client work)
+- Personal projects: AI Content Studio, Cab Booking System, DataSync
+- Available for international freelance work
+- Contact: hrsa.kshyp@gmail.com
+- GitHub: github.com/hrshita-kshyp
+- LinkedIn: linkedin.com/in/harshita-kshyp
+- Location: Noida, India
 
-Current Status (2025): Harshita had a massive year. She moved from a "bench trainee" at a major MNC to a core developer handling the team's most critical work.
+Services offered:
+- QuickBooks integrations
+- Custom business dashboards
+- AI automation tools
+- Internal business applications
+- Workflow automation
+- Backend API development
 
-The "Safety Net": She scaled a global freelance business specializing in high-demand niches. She no longer has "job loss anxiety" because her skills have created total financial security.
+Tone: Direct, confident, professional but approachable. No buzzwords. Focus on real problems solved and business value delivered.
 
-Tech Stack: Expert in Zoho (Deluge), Stripe API, and QuickBooks integrations. She also works with React, Angular, and Node.js.
+Rules:
+- Keep responses concise (2-4 sentences max unless asked for detail)
+- If asked about availability or hiring, encourage them to use the contact form or email hrsa.kshyp@gmail.com
+- If asked something too personal or completely off-topic, politely redirect to work-related topics
+- Do NOT make up projects or skills not listed above`;
 
-Real Projects: Mention "Hirvanaa" (business platform) and custom internal automation tools for international firms that replaced manual data entry.
-
-Tone & Personality:
-
-Voice: Use Harshita's "og" tone—direct, no-nonsense, and professional but unfiltered.
-
-No Bluffing: Do not use corporate jargon like "synergy" or "passionate innovator." Stick to "Real results" and "Clean code."
-
-Relatability: If asked about local clients, you can mention the struggle with low-budget/high-expectation requests (like the 50-page site for 3k) as a lesson learned.
-
-Boundary: If a user asks something too personal or unrelated to tech/hiring, politely steer them back to Harshita’s work.
-`;
-
-const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
-  systemInstruction: systemInstruction
-});
-
-// List available models to debug
-async function listModels() {
-  try {
-    const list = await genAI.getGenerativeModel({ model: "gemini-1.0-pro" }).apiKey; // Hack to check connection? No, use the detailed method
-    // actually, simpler just to try to connect
-    console.log("Gemini initialized with model: gemini-1.5-flash-001");
-  } catch (e) {
-    console.error("Error connecting to Gemini:", e);
-  }
-}
-listModels();
-
-// Store chat history in memory (simple implementation)
-// In a real app, this should be per-session or persisted
-const chats = {};
+// In-memory chat history per session (simple)
+const chatHistories = {};
 
 app.post('/chat', async (req, res) => {
   try {
     const { message, sessionId = 'default' } = req.body;
 
-    if (!chats[sessionId]) {
-      chats[sessionId] = model.startChat({
-        history: [
-          {
-            role: "user",
-            parts: [{ text: "Who are you?" }],
-          },
-          {
-            role: "model",
-            parts: [{ text: "I'm Harshita's assistant. I handle questions about her tech stack, integrations, and availability for projects. What's on your mind?" }],
-          }
-        ],
-      });
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: 'Message is required' });
     }
 
-    const chat = chats[sessionId];
-    const result = await chat.sendMessage(message);
-    const response = await result.response;
-    const text = response.text();
+    // Build or retrieve history
+    if (!chatHistories[sessionId]) {
+      chatHistories[sessionId] = [];
+    }
 
-    // Log the full interaction for debugging
-    console.log(`[${new Date().toISOString()}] Chat success`);
-    res.json({ response: text });
+    const history = chatHistories[sessionId];
+
+    // Add user message to history
+    history.push({ role: 'user', content: message });
+
+    // Keep history manageable (last 10 messages)
+    const recentHistory = history.slice(-10);
+
+    const completion = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...recentHistory
+      ],
+      max_tokens: 300,
+      temperature: 0.7
+    });
+
+    const reply = completion.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+
+    // Add assistant reply to history
+    history.push({ role: 'assistant', content: reply });
+
+    console.log(`[${new Date().toISOString()}] Chat success — model: llama-3.3-70b`);
+    res.json({ response: reply });
+
   } catch (error) {
-    console.error('Gemini API Error:', error);
+    console.error('Groq API Error:', error?.message || error);
     res.status(500).json({
       error: 'Failed to generate response',
-      details: error.message,
-      stack: error.stack
+      details: error?.message || 'Unknown error'
     });
   }
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`✅ Server running at http://localhost:${port}`);
+  console.log(`   Groq API key: ${process.env.GROQ_API_KEY ? '✅ loaded' : '❌ missing — set GROQ_API_KEY in .env'}`);
 });

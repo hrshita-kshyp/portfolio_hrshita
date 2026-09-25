@@ -11,80 +11,102 @@
     <meta property="og:title" content="Harshita — Full-Stack Engineer" />
     <meta
       property="og:description"
-      content="Self-taught full-stack engineer shipping AI-powered products end-to-end. Currently at TCS, building Vyntra."
+      content="Self-taught full-stack engineer shipping AI-powered products end-to-end. Building ApplyWise, open to full-time remote roles."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hrshita.online" />
     <meta
       name="theme-color"
-      content="#FAFAF8"
+      content="#F6F1E7"
       media="(prefers-color-scheme: light)"
     />
     <meta
       name="theme-color"
-      content="#131311"
+      content="#16140F"
       media="(prefers-color-scheme: dark)"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg: #fafaf8;
-        --surface: #ffffff;
-        --text: #1a1a1a;
-        --muted: #6b6b68;
-        --line: #e3e3de;
-        --line-strong: #cfcfc8;
-        --accent: #1e3a5f;
-        --accent-hover: #162c48;
+        --bg: #f6f1e7;
+        --surface: #fffcf5;
+        --text: #1d1b16;
+        --muted: #5f5a4f;
+        --line: #e4dccb;
+        --line-strong: #cdc2ab;
+        --accent: #2a3fb0;
+        --accent-hover: #1f3090;
         --accent-fg: #ffffff;
-        --tint: #edf1f6;
+        --tint: #e8ebfa;
+        --coral: #d4552f;
+        --coral-tint: #fbe4da;
+        --sun: #e9b949;
+        --sun-tint: #fbf0d2;
+        --sage: #3f8a63;
+        --sage-tint: #dfefe5;
         --danger: #a33a2b;
+        --glow: 0.55;
         --chart-filter: none;
         --max: 1080px;
         --mono:
-          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+          "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
           monospace;
         --sans:
-          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           sans-serif;
+        --serif: "Fraunces", Georgia, "Times New Roman", serif;
       }
 
       /* Dark theme. Same palette logic, flipped: warm-neutral dark ground, and the
        navy lifted to a legible tint since #1E3A5F disappears on a dark surface. */
       :root[data-theme="dark"] {
-        --bg: #131311;
-        --surface: #1a1a18;
-        --text: #edede8;
-        --muted: #9a9a93;
-        --line: #2b2b27;
-        --line-strong: #3e3e38;
-        --accent: #8cb4e0;
-        --accent-hover: #a8c8ec;
-        --accent-fg: #10151c;
-        --tint: #1d2732;
+        --bg: #16140f;
+        --surface: #1f1c16;
+        --text: #f0ebe0;
+        --muted: #a8a193;
+        --line: #2f2b23;
+        --line-strong: #453f33;
+        --accent: #93a6f2;
+        --accent-hover: #b1c0f6;
+        --accent-fg: #10131f;
+        --tint: #222844;
+        --coral: #f08a64;
+        --coral-tint: #3a2419;
+        --sun: #f2cb6b;
+        --sun-tint: #372d15;
+        --sage: #7fc29b;
+        --sage-tint: #1b3025;
         --danger: #e08a76;
+        --glow: 0.3;
         /* ghchart only serves a light-ground graph; flip its lightness, keep its hue. */
         --chart-filter: invert(1) hue-rotate(180deg);
       }
 
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme="light"]) {
-          --bg: #131311;
-          --surface: #1a1a18;
-          --text: #edede8;
-          --muted: #9a9a93;
-          --line: #2b2b27;
-          --line-strong: #3e3e38;
-          --accent: #8cb4e0;
-          --accent-hover: #a8c8ec;
-          --accent-fg: #10151c;
-          --tint: #1d2732;
-          --danger: #e08a76;
+          --bg: #16140f;
+        --surface: #1f1c16;
+        --text: #f0ebe0;
+        --muted: #a8a193;
+        --line: #2f2b23;
+        --line-strong: #453f33;
+        --accent: #93a6f2;
+        --accent-hover: #b1c0f6;
+        --accent-fg: #10131f;
+        --tint: #222844;
+        --coral: #f08a64;
+        --coral-tint: #3a2419;
+        --sun: #f2cb6b;
+        --sun-tint: #372d15;
+        --sage: #7fc29b;
+        --sage-tint: #1b3025;
+        --danger: #e08a76;
+        --glow: 0.3;
           --chart-filter: invert(1) hue-rotate(180deg);
         }
       }
@@ -547,6 +569,37 @@
         gap: 0.5rem 1rem;
       }
 
+      /* ---------- x timeline ---------- */
+      .timeline-panel {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 4px;
+        padding: 0.75rem;
+        max-width: 560px;
+      }
+
+      .timeline-mount:empty+.timeline-loading {
+        display: block;
+      }
+
+      .timeline-loading,
+      .timeline-fallback {
+        font-family: var(--mono);
+        font-size: 0.8125rem;
+        color: var(--muted);
+        padding: 1.25rem 0.75rem;
+        margin: 0;
+      }
+
+      .timeline-loading {
+        display: none;
+      }
+
+      .timeline-fallback a {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
       /* ---------- skills ---------- */
       .skill-row {
         display: grid;
@@ -741,6 +794,363 @@
         color: var(--muted);
       }
 
+      /* ---------- editorial theme ---------- */
+      .hero-name,
+      .section-title,
+      .featured-title,
+      .card h3,
+      .client-name {
+        font-family: var(--serif);
+        font-optical-sizing: auto;
+      }
+
+      .wordmark {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 1.2rem;
+        letter-spacing: 0;
+      }
+
+      .wordmark::after {
+        content: ".";
+        color: var(--coral);
+        font-style: normal;
+      }
+
+      /* Hero: big serif name with a coral full stop, soft colour glows behind. */
+      .hero {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      .hero::before,
+      .hero::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        border-radius: 50%;
+        filter: blur(70px);
+        opacity: var(--glow);
+        pointer-events: none;
+      }
+
+      .hero::before {
+        width: 34rem;
+        height: 34rem;
+        right: -8rem;
+        top: -10rem;
+        background: radial-gradient(circle, var(--coral), transparent 65%);
+        animation: drift 18s ease-in-out infinite alternate;
+      }
+
+      .hero::after {
+        width: 28rem;
+        height: 28rem;
+        right: 14rem;
+        top: 8rem;
+        background: radial-gradient(circle, var(--sun), transparent 65%);
+        animation: drift 22s ease-in-out infinite alternate-reverse;
+      }
+
+      @keyframes drift {
+        from {
+          transform: translate(0, 0) scale(1);
+        }
+        to {
+          transform: translate(-3rem, 2rem) scale(1.12);
+        }
+      }
+
+      .hero-name {
+        font-size: clamp(3.6rem, 12vw, 7.5rem);
+        font-weight: 500;
+        letter-spacing: -0.035em;
+        line-height: 0.95;
+      }
+
+      .hero-name::after {
+        content: ".";
+        color: var(--coral);
+      }
+
+      .hero-lede {
+        font-size: clamp(1.125rem, 2.2vw, 1.35rem);
+        color: var(--text);
+      }
+
+      .status {
+        border-radius: 999px;
+        border-left: 1px solid var(--line);
+        padding: 0.55rem 1.1rem;
+        background: color-mix(in srgb, var(--surface) 80%, transparent);
+        backdrop-filter: blur(6px);
+      }
+
+      .status .dot {
+        background: var(--sage);
+        animation: pulse 2.2s ease-out infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 color-mix(in srgb, var(--sage) 60%, transparent);
+        }
+        100% {
+          box-shadow: 0 0 0 9px transparent;
+        }
+      }
+
+      .btn {
+        border-radius: 999px;
+        padding: 0.78rem 1.4rem;
+        transition:
+          background 0.18s ease,
+          border-color 0.18s ease,
+          color 0.18s ease,
+          transform 0.18s ease;
+      }
+
+      .btn-primary {
+        box-shadow: 0 8px 20px -10px var(--accent);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-ghost {
+        background: var(--surface);
+      }
+
+      /* Section kickers: coloured dash, like a magazine section label. */
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--coral);
+        font-weight: 500;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 1.5rem;
+        height: 2px;
+        background: currentColor;
+        flex: none;
+      }
+
+      .section-title {
+        font-size: clamp(2rem, 4.2vw, 2.9rem);
+        font-weight: 500;
+        letter-spacing: -0.025em;
+        line-height: 1.1;
+      }
+
+      /* Cards: each gets its own colour, a top stripe, and lifts on hover. */
+      .card,
+      .featured {
+        --c: var(--accent);
+        --c-tint: var(--tint);
+        border-radius: 14px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          border-color 0.25s ease,
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+
+      .card::before,
+      .featured::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 4px;
+        background: var(--c);
+      }
+
+      .grid > .card:nth-child(3n + 1) {
+        --c: var(--coral);
+        --c-tint: var(--coral-tint);
+      }
+
+      .grid > .card:nth-child(3n + 2) {
+        --c: var(--accent);
+        --c-tint: var(--tint);
+      }
+
+      .grid > .card:nth-child(3n + 3) {
+        --c: var(--sage);
+        --c-tint: var(--sage-tint);
+      }
+
+      .featured {
+        --c: var(--sun);
+        --c-tint: var(--sun-tint);
+        background:
+          radial-gradient(
+            ellipse at 100% 0%,
+            color-mix(in srgb, var(--sun) 18%, transparent),
+            transparent 55%
+          ),
+          var(--surface);
+      }
+
+      .card:hover,
+      .featured:hover {
+        transform: translateY(-4px);
+        border-color: color-mix(in srgb, var(--c) 45%, var(--line));
+        box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--c) 70%, transparent);
+      }
+
+      .card {
+        padding: 1.75rem 1.6rem 1.5rem;
+      }
+
+      .card-index {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 1.6rem;
+        line-height: 1;
+        letter-spacing: 0;
+        color: var(--c);
+      }
+
+      .card h3 {
+        font-size: 1.4rem;
+        font-weight: 500;
+        letter-spacing: -0.015em;
+        line-height: 1.2;
+      }
+
+      .featured-title {
+        font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+        font-weight: 500;
+        letter-spacing: -0.025em;
+        line-height: 1.12;
+      }
+
+      .featured-tagline {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 1.15rem;
+        color: var(--coral);
+      }
+
+      .feature-list li::before {
+        background: var(--c);
+      }
+
+      .pill {
+        border-radius: 999px;
+        padding: 0.28rem 0.7rem;
+        background: var(--c-tint, var(--tint));
+        color: var(--text);
+      }
+
+      .link {
+        font-weight: 500;
+      }
+
+      .card .link,
+      .featured .link {
+        color: var(--c);
+      }
+
+      /* Sun yellow is too light for text on paper; keep featured links in ink-blue. */
+      .featured .link {
+        color: var(--accent);
+      }
+
+      .link:hover {
+        opacity: 1;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      /* Skills: each row lights up in its own colour on hover. */
+      .skill-label {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 1.1rem;
+      }
+
+      .tag {
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        background: var(--surface);
+        color: var(--text);
+        transition:
+          background 0.18s ease,
+          border-color 0.18s ease;
+      }
+
+      .skill-row:nth-child(4n + 1) .tag:hover {
+        background: var(--coral-tint);
+        border-color: var(--coral);
+      }
+
+      .skill-row:nth-child(4n + 2) .tag:hover {
+        background: var(--tint);
+        border-color: var(--accent);
+      }
+
+      .skill-row:nth-child(4n + 3) .tag:hover {
+        background: var(--sage-tint);
+        border-color: var(--sage);
+      }
+
+      .skill-row:nth-child(4n + 4) .tag:hover {
+        background: var(--sun-tint);
+        border-color: var(--sun);
+      }
+
+      .gh-panel,
+      .timeline-panel {
+        border-radius: 14px;
+      }
+
+      .client-row {
+        transition: padding-left 0.25s ease;
+      }
+
+      .client-row:hover {
+        padding-left: 0.6rem;
+      }
+
+      .client-name {
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      .social {
+        border-radius: 999px;
+      }
+
+      .social:hover {
+        background: var(--coral-tint);
+        border-color: var(--coral);
+        color: var(--coral);
+      }
+
+      input,
+      textarea {
+        border-radius: 10px;
+      }
+
+      footer {
+        border-top: 3px solid transparent;
+        border-image: linear-gradient(
+            90deg,
+            var(--coral),
+            var(--sun),
+            var(--sage),
+            var(--accent)
+          )
+          1;
+      }
+
       /* ---------- motion ---------- */
       /* Only hide ahead of the fade-in when JS is running to bring it back. */
       .js .reveal {
@@ -812,6 +1222,50 @@
           transform: none;
         }
       }
+      /* ---------- kinetic portfolio layer ---------- */
+      body { overflow-x: hidden; background-image: linear-gradient(color-mix(in srgb, var(--line) 38%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--line) 38%, transparent) 1px, transparent 1px); background-size: 48px 48px; background-attachment: fixed; }
+      body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(500px circle at var(--mouse-x, 70%) var(--mouse-y, 12%), color-mix(in srgb, var(--coral) 13%, transparent), transparent 70%); }
+      .nav { background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(18px) saturate(1.3); }
+      .nav-inner { height: 4.5rem; }
+      .hero { min-height: calc(100svh - 4.5rem); display: grid; align-items: center; padding-block: clamp(4rem, 9vw, 7rem); }
+      .hero-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); gap: clamp(3rem, 7vw, 7rem); align-items: center; }
+      .hero-kicker { display: inline-flex; align-items: center; gap: 0.65rem; margin-bottom: 1.4rem; font: 500 0.74rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); }
+      .hero-kicker::before { content: ""; width: 2rem; height: 1px; background: currentColor; }
+      .hero-name span { display: block; color: transparent; -webkit-text-stroke: 1.5px var(--text); font-style: italic; transform: translateX(clamp(1rem, 5vw, 4rem)); }
+      .hero-lede { max-width: 56ch; }
+      .hero-lede strong { color: var(--coral); font-weight: 500; }
+      .hero-stage { position: relative; aspect-ratio: 1 / 1.08; display: grid; place-items: center; }
+      .orbit { position: absolute; inset: 8%; border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); border-radius: 50%; animation: orbit-spin 24s linear infinite; }
+      .orbit::before, .orbit::after { content: ""; position: absolute; width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 8px var(--coral-tint); }
+      .orbit::before { top: 10%; left: 12%; }
+      .orbit::after { right: 2%; bottom: 28%; background: var(--sage); box-shadow: 0 0 0 8px var(--sage-tint); }
+      .builder-card { position: relative; width: min(78%, 320px); padding: 1.4rem; border: 1px solid var(--line-strong); border-radius: 22px; background: color-mix(in srgb, var(--surface) 85%, transparent); box-shadow: 0 30px 80px -38px color-mix(in srgb, var(--accent) 65%, transparent); backdrop-filter: blur(16px); transform: rotate(3deg); animation: card-float 5s ease-in-out infinite; }
+      .window-dots { display: flex; gap: 0.35rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+      .window-dots i { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--coral); }
+      .window-dots i:nth-child(2) { background: var(--sun); }
+      .window-dots i:nth-child(3) { background: var(--sage); }
+      .builder-label { margin-top: 1.25rem; font: 0.72rem/1 var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+      .builder-card h2 { margin-top: 0.65rem; font: 500 clamp(1.8rem, 4vw, 2.6rem)/1.05 var(--serif); }
+      .builder-card p { margin-top: 0.8rem; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
+      .builder-stack { display: flex; gap: 0.35rem; margin-top: 1.2rem; }
+      .builder-stack span { flex: 1; height: 0.38rem; border-radius: 1rem; background: var(--accent); }
+      .builder-stack span:nth-child(2) { background: var(--coral); flex: 0.7; }
+      .builder-stack span:nth-child(3) { background: var(--sun); flex: 0.4; }
+      .floating-note { position: absolute; padding: 0.55rem 0.8rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); box-shadow: 0 12px 32px -20px var(--text); font: 500 0.72rem/1 var(--mono); }
+      .note-one { top: 8%; right: -2%; transform: rotate(6deg); }
+      .note-two { left: -3%; bottom: 12%; transform: rotate(-7deg); }
+      @keyframes orbit-spin { to { transform: rotate(360deg); } }
+      @keyframes card-float { 50% { transform: rotate(-1deg) translateY(-10px); } }
+      section:not(.hero) { position: relative; background: color-mix(in srgb, var(--bg) 94%, transparent); }
+      .section-head { max-width: 720px; }
+      .section-title { text-wrap: balance; }
+      .featured { padding: clamp(2rem, 5vw, 4rem); }
+      .featured::after { content: "LIVE / 01"; position: absolute; top: 1.5rem; right: 1.5rem; font: 0.68rem/1 var(--mono); letter-spacing: 0.12em; color: var(--muted); }
+      .card { min-height: 100%; }
+      .card p + p { margin-top: 0.35rem; }
+      .grid { align-items: stretch; }
+      @media (max-width: 800px) { .hero { min-height: auto; } .hero-layout { grid-template-columns: 1fr; } .hero-stage { width: min(100%, 430px); margin-inline: auto; } }
+      @media (max-width: 500px) { .hero-name { font-size: clamp(3.5rem, 20vw, 5rem); } .hero-stage { aspect-ratio: 1 / 0.9; } .floating-note { font-size: 0.62rem; } .featured::after { display: none; } }
     </style>
     <script>
       // Runs before first paint: no flash of the wrong theme, and the fade-in
@@ -912,8 +1366,10 @@
     <main id="top">
       <!-- ---------- hero ---------- -->
       <section class="hero">
-        <div class="wrap">
-          <h1 class="hero-name">Harshita</h1>
+        <div class="wrap hero-layout">
+          <div class="hero-copy">
+          <div class="hero-kicker">Engineer · maker · curious human</div>
+          <h1 class="hero-name">Harshita<span>Kashyap</span></h1>
           <p class="hero-lede">
             I'm a self-taught full-stack engineer who ships AI-powered products
             end-to-end — architecture, prompt engineering, frontend, backend,
@@ -923,7 +1379,7 @@
             <span class="dot"></span>
             <span>Recently at TCS</span>
             <span class="sep">·</span>
-            <span>Building Vyntra</span>
+            <span>Building ApplyWise</span>
             <span class="sep">·</span>
             <span>Open to full-time remote roles</span>
           </div>
@@ -946,6 +1402,19 @@
               </svg>
             </a>
           </div>
+          </div>
+          <div class="hero-stage" aria-hidden="true">
+            <div class="orbit"></div>
+            <div class="builder-card">
+              <div class="window-dots"><i></i><i></i><i></i></div>
+              <div class="builder-label">Currently exploring</div>
+              <h2>Human ideas,<br />shipped with AI.</h2>
+              <p>From blank canvas to a working product — I care about the details in between.</p>
+              <div class="builder-stack"><span></span><span></span><span></span></div>
+            </div>
+            <span class="floating-note note-one">✦ building ApplyWise</span>
+            <span class="floating-note note-two">available worldwide ↗</span>
+          </div>
         </div>
       </section>
 
@@ -959,50 +1428,39 @@
 
           <article class="featured reveal">
             <h3 class="featured-title">
-              Vyntra — AI-Powered Health Intelligence Platform
+              ApplyWise — Your Job Application Copilot
             </h3>
             <p class="featured-tagline">
-              "Know your body. Not just your steps."
+              "Apply smarter. Stay in control."
             </p>
             <p class="featured-desc">
-              Vyntra ingests biometric data and turns it into a BioAge score — a
-              single read on how your body is actually doing. Built solo, from
-              architecture through deployment, and shipped in public.
+              A local-first Chrome extension that reads your résumé, evaluates
+              your fit for a role, and takes the repetition out of ATS forms —
+              while keeping every important decision in your hands.
             </p>
             <ul class="feature-list">
-              <li>React 19 + Vite + Tailwind 4 frontend</li>
-              <li>Groq-hosted Llama 3.3 70B for coaching insights</li>
-              <li>Supabase auth + real-time multi-device sync</li>
-              <li>Live biometric dashboards — HRV, strain, recovery</li>
+              <li>Explains role fit, strengths, and missing qualifications</li>
+              <li>Fills repetitive ATS fields and attaches your résumé</li>
+              <li>Answer Memory reuses responses only after approval</li>
+              <li>Never stores sensitive fields or clicks Submit</li>
             </ul>
             <div class="pills">
-              <span class="pill">React 19</span>
-              <span class="pill">Groq / Llama 3.3 70B</span>
-              <span class="pill">Supabase</span>
-              <span class="pill">Recharts</span>
+              <span class="pill">Chrome MV3</span>
+              <span class="pill">JavaScript</span>
+              <span class="pill">PDF.js</span>
+              <span class="pill">Local-first</span>
             </div>
             <div class="links">
               <a
                 class="link"
-                href="https://vyntra-delta.vercel.app"
+                href="https://get-applywise.vercel.app/"
                 target="_blank"
                 rel="noopener"
               >
-                Live demo
+                Join the beta
                 <svg class="icon">
                   <use href="#i-arrow-up-right" />
                 </svg>
-              </a>
-              <a
-                class="link"
-                href="https://github.com/hrshita-kshyp/Vyntra"
-                target="_blank"
-                rel="noopener"
-              >
-                <svg class="icon">
-                  <use href="#i-github" />
-                </svg>
-                Code
               </a>
             </div>
           </article>
@@ -1018,70 +1476,101 @@
           <div class="grid">
             <article class="card reveal">
               <div class="card-index">01</div>
-              <h3>AI Content Studio</h3>
+              <h3>Verum — Outreach Agent</h3>
               <p>
-                Content intelligence platform with AI-powered analytics and
-                automated generation — end-to-end, from prompt design to
-                deployment.
+                An outreach agent that only sends what it can prove. It
+                researches a company from primary sources and puts every lead
+                through 11 checks: a named decision-maker, a published route to
+                them, and a dated reason to write. Only then does it draft a
+                short email built from sourced facts.
+              </p>
+              <p>
+                It runs unattended on scheduled cloud sessions with no memory
+                of their own. All state lives on a git branch, so a crashed run
+                can never double-send. It's being tested on my own company,
+                Ranuvo, first.
               </p>
               <div class="pills">
-                <span class="pill">React</span>
-                <span class="pill">Node.js</span>
-                <span class="pill">Gemini API</span>
-                <span class="pill">MongoDB</span>
+                <span class="pill">Claude agents</span>
+                <span class="pill">MCP</span>
+                <span class="pill">Scheduled routines</span>
+                <span class="pill">SPF / DKIM / DMARC</span>
               </div>
               <div class="links">
                 <a
                   class="link"
-                  href="https://ai-content-studio-one.vercel.app/"
+                  href="https://verum-pied.vercel.app/"
                   target="_blank"
                   rel="noopener"
                 >
-                  Live
+                  Build log
                   <svg class="icon">
                     <use href="#i-arrow-up-right" />
                   </svg>
-                </a>
-                <a
-                  class="link"
-                  href="https://github.com/hrshita-kshyp/AI-Content-Studio"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <svg class="icon">
-                    <use href="#i-github" />
-                  </svg>
-                  Code
                 </a>
               </div>
             </article>
 
             <article class="card reveal">
               <div class="card-index">02</div>
-              <h3>Cab Booking System</h3>
+              <h3>Vyntra — AI Health Intelligence</h3>
               <p>
-                Full-stack booking platform with real-time driver tracking,
-                payment integration, and driver-customer matching over
-                WebSockets.
+                A health intelligence platform that turns biometric data into
+                a BioAge score and clear, personalized coaching insights.
+              </p>
+              <p>
+                Built solo from architecture through deployment, with live HRV,
+                strain, and recovery dashboards plus real-time device sync.
               </p>
               <div class="pills">
-                <span class="pill">Angular</span>
-                <span class="pill">Node.js</span>
-                <span class="pill">MongoDB</span>
-                <span class="pill">WebSockets</span>
+                <span class="pill">React 19</span>
+                <span class="pill">Llama 3.3</span>
+                <span class="pill">Supabase</span>
+                <span class="pill">Recharts</span>
               </div>
               <div class="links">
                 <a
                   class="link"
-                  href="https://github.com/hrshita-kshyp/Cab-Booking-System"
+                  href="https://vyntra-delta.vercel.app"
                   target="_blank"
                   rel="noopener"
                 >
+                  Live demo
                   <svg class="icon">
-                    <use href="#i-github" />
+                    <use href="#i-arrow-up-right" />
                   </svg>
-                  Code
                 </a>
+              </div>
+            </article>
+
+            <article class="card reveal">
+              <div class="card-index">03</div>
+              <h3>QuickBooks Sales-Alert Platform</h3>
+              <p>
+                Multi-tenant platform built for a client. It syncs QuickBooks
+                Online into PostgreSQL every 5 minutes, flags overdue invoices
+                and customers going quiet, and drafts AI follow-up emails.
+              </p>
+              <p>
+                Also includes web push alerts, A/R aging, and AI-generated
+                social posts published to Facebook, Instagram, and LinkedIn.
+                600+ commits.
+              </p>
+              <div class="pills">
+                <span class="pill">React</span>
+                <span class="pill">Node.js</span>
+                <span class="pill">PostgreSQL</span>
+                <span class="pill">QuickBooks OAuth</span>
+                <span class="pill">OpenAI</span>
+                <span class="pill">Redis</span>
+              </div>
+              <div class="links">
+                <span class="client-meta">
+                  <svg class="icon">
+                    <use href="#i-lock" />
+                  </svg>
+                  private · client work
+                </span>
               </div>
             </article>
           </div>
@@ -1121,7 +1610,7 @@
                 At TCS, I owned frontend migrations on a healthcare platform
                 serving 500+ enterprise clients. Now independent, I take on
                 client work and ship my own products, while looking for the next
-                full-time role.s
+                full-time role.
               </p>
             </article>
           </div>
@@ -1165,6 +1654,42 @@
         </div>
       </section>
 
+      <!-- ---------- x timeline ---------- -->
+      <section id="posts">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div class="eyebrow">Latest</div>
+            <h2 class="section-title">Building in public</h2>
+            <p class="section-lede">Recent posts from @hrshita_kshyp.</p>
+          </div>
+          <div class="timeline-panel reveal">
+            <div class="timeline-mount" id="xTimeline">
+              <a
+                class="twitter-timeline"
+                href="https://twitter.com/hrshita_kshyp"
+                data-height="480"
+                data-chrome="noheader nofooter transparent"
+                data-dnt="true"
+              >Posts by @hrshita_kshyp</a>
+            </div>
+            <p class="timeline-loading">Loading posts from X…</p>
+            <p class="timeline-fallback" id="xFallback" hidden>
+              X didn't load — it's often blocked by tracking protection.
+              <a href="https://x.com/hrshita_kshyp" target="_blank" rel="noopener"
+                >Read @hrshita_kshyp on X ↗</a
+              >
+            </p>
+            <noscript>
+              <p class="timeline-fallback">
+                <a href="https://x.com/hrshita_kshyp" target="_blank" rel="noopener"
+                  >Read @hrshita_kshyp on X ↗</a
+                >
+              </p>
+            </noscript>
+          </div>
+        </div>
+      </section>
+
       <!-- ---------- skills ---------- -->
       <section id="skills">
         <div class="wrap">
@@ -1199,6 +1724,9 @@
             <div class="skill-row">
               <div class="skill-label">ai</div>
               <div class="skill-tags">
+                <span class="tag">Claude agents</span>
+                <span class="tag">MCP</span>
+                <span class="tag">OpenAI API</span>
                 <span class="tag">Groq / Llama 3.3</span>
                 <span class="tag">Gemini API</span>
                 <span class="tag">Prompt engineering</span>
@@ -1211,6 +1739,7 @@
                 <span class="tag">PostgreSQL</span>
                 <span class="tag">Supabase</span>
                 <span class="tag">MongoDB</span>
+                <span class="tag">Redis</span>
                 <span class="tag">MySQL</span>
                 <span class="tag">Firebase</span>
               </div>
@@ -1246,28 +1775,6 @@
           <div class="reveal">
             <div class="client-row">
               <div>
-                <div class="client-name">
-                  Sales dashboard &amp; automation system
-                </div>
-                <p class="client-desc">
-                  QuickBooks OAuth 2.0 integration with real-time sync, invoice
-                  and overdue tracking, customer activity analytics, and
-                  AI-drafted follow-up emails replacing hours of manual outreach
-                  weekly.
-                </p>
-                <div class="client-tags">
-                  React · Node.js · QuickBooks API · Gemini · MongoDB
-                </div>
-              </div>
-              <div class="client-meta">
-                <svg class="icon">
-                  <use href="#i-lock" />
-                </svg>
-                private
-              </div>
-            </div>
-            <div class="client-row">
-              <div>
                 <div class="client-name">Invoice automation tool</div>
                 <p class="client-desc">
                   Automated invoice generation and payment reminders with
@@ -1301,31 +1808,6 @@
                   <use href="#i-lock" />
                 </svg>
                 private
-              </div>
-            </div>
-            <div class="client-row">
-              <div>
-                <div class="client-name">
-                  Marketing site — digital services company
-                </div>
-                <p class="client-desc">
-                  Service showcase site with booking flow, built for fast load
-                  and clean mobile behaviour.
-                </p>
-                <div class="client-tags">Next.js · CSS</div>
-              </div>
-              <div class="client-meta">
-                <a
-                  class="link"
-                  href="https://surya-shine.vercel.app/"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  live
-                  <svg class="icon">
-                    <use href="#i-arrow-up-right" />
-                  </svg>
-                </a>
               </div>
             </div>
             <div class="client-row">
@@ -1374,7 +1856,7 @@
               </div>
               <div class="contact-item">
                 <div class="contact-label">Location</div>
-                <div>Noida, India · open to remote</div>
+                <div>India</div>
               </div>
               <div class="contact-item">
                 <div class="contact-label">Elsewhere</div>
@@ -1473,20 +1955,23 @@
     </footer>
 
     <script>
+      function activeTheme() {
+        return (
+          document.documentElement.getAttribute("data-theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light")
+        );
+      }
+
       // Theme toggle. No stored value means "follow the OS", so the first click
       // has to flip away from whatever the OS is currently asking for.
       const themeToggle = document.getElementById("themeToggle");
 
       themeToggle.addEventListener("click", () => {
-        const root = document.documentElement;
-        const current =
-          root.getAttribute("data-theme") ||
-          (window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light");
-        const next = current === "dark" ? "light" : "dark";
+        const next = activeTheme() === "dark" ? "light" : "dark";
 
-        root.setAttribute("data-theme", next);
+        document.documentElement.setAttribute("data-theme", next);
         try {
           localStorage.setItem("theme", next);
         } catch (e) {
@@ -1494,11 +1979,90 @@
         }
       });
 
+      // X timeline. Third-party and frequently blocked, so it loads only when
+      // the section is near the viewport and always resolves to something
+      // visible — the embed, or a plain link to the profile.
+      const xMount = document.getElementById("xTimeline");
+      const xFallback = document.getElementById("xFallback");
+      let xScriptRequested = false;
+      let xPollTimer = null;
+
+      // Only an iframe confirms that X actually rendered the timeline.
+      function timelineRendered() {
+        return Boolean(xMount.querySelector("iframe"));
+      }
+
+      function watchTimeline() {
+        const deadline = Date.now() + 20000;
+        clearInterval(xPollTimer);
+
+        xPollTimer = setInterval(() => {
+          if (timelineRendered()) {
+            xFallback.hidden = true;
+            clearInterval(xPollTimer);
+          } else if (Date.now() > deadline) {
+            xFallback.hidden = false;
+            clearInterval(xPollTimer);
+          }
+        }, 500);
+      }
+
+      function showTimelineFallback() {
+        clearInterval(xPollTimer);
+        if (!timelineRendered()) xFallback.hidden = false;
+      }
+
+      function loadTimelineScript() {
+        if (xScriptRequested) return;
+        xScriptRequested = true;
+
+        const timelineLink = xMount.querySelector(".twitter-timeline");
+        timelineLink.dataset.theme = activeTheme();
+
+        const script = document.createElement("script");
+        script.src = "https://platform.twitter.com/widgets.js";
+        script.async = true;
+        script.onload = () => {
+          if (window.twttr?.widgets) window.twttr.widgets.load(xMount);
+          watchTimeline();
+        };
+        script.onerror = showTimelineFallback;
+        document.head.appendChild(script);
+
+        // Blocked requests can hang rather than error — don't leave a dead box.
+        setTimeout(showTimelineFallback, 20000);
+      }
+
+      if ("IntersectionObserver" in window) {
+        const xObserver = new IntersectionObserver(
+          (entries) => {
+            if (entries[0].isIntersecting) {
+              xObserver.disconnect();
+              loadTimelineScript();
+            }
+          },
+          { rootMargin: "500px" },
+        );
+        xObserver.observe(document.getElementById("posts"));
+      } else {
+        loadTimelineScript();
+      }
+
       // Fade sections in as they enter the viewport.
       const reduceMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
       const revealables = document.querySelectorAll(".reveal");
+
+      // A quiet spotlight follows the pointer and makes the page feel tactile.
+      window.addEventListener(
+        "pointermove",
+        (event) => {
+          document.body.style.setProperty("--mouse-x", `${event.clientX}px`);
+          document.body.style.setProperty("--mouse-y", `${event.clientY}px`);
+        },
+        { passive: true },
+      );
 
       if (reduceMotion || !("IntersectionObserver" in window)) {
         revealables.forEach((el) => el.classList.add("is-visible"));

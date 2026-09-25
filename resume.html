@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Harshita Kashyap - Resume</title>
+  <style>
+    @page { size: A4; margin: 10mm 12mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #171717; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; line-height: 1.3; }
+    @media screen { body { padding: 38px 45px; } }
+    a { color: inherit; text-decoration: none; }
+    header { text-align: center; margin-bottom: 9px; }
+    h1 { margin: 0; font-size: 24pt; line-height: 1; letter-spacing: -0.6px; }
+    .role { margin: 3px 0 5px; color: #334155; font-size: 10.5pt; font-weight: 700; }
+    .contact { display: flex; justify-content: center; flex-wrap: wrap; gap: 2px 10px; font-size: 8.5pt; }
+    .contact a { color: #1e40af; }
+    .summary { margin: 9px 0 5px; }
+    h2 { margin: 9px 0 5px; padding-bottom: 2px; border-bottom: 1.2px solid #1e293b; font-size: 11pt; line-height: 1.1; letter-spacing: 0.45px; text-transform: uppercase; }
+    .skills { display: grid; gap: 2px; }
+    .skill-line strong { display: inline-block; min-width: 83px; }
+    .entry { margin-top: 6px; break-inside: avoid; }
+    .entry-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .entry-title { font-weight: 700; font-size: 9.6pt; }
+    .entry-date { flex: none; font-size: 8.7pt; font-weight: 700; }
+    .entry-sub { display: flex; justify-content: space-between; color: #374151; font-style: italic; margin-top: 1px; }
+    ul { margin: 2px 0 0; padding-left: 16px; }
+    li { margin: 2px 0; padding-left: 1px; }
+    .project-link { color: #1e40af; font-size: 8.5pt; font-weight: 400; }
+    .education { display: flex; justify-content: space-between; gap: 12px; }
+    .certs { display: flex; flex-wrap: wrap; gap: 2px 18px; }
+    .certs span::before { content: "• "; }
+    .accent { color: #1e40af; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Harshita Kashyap</h1>
+    <div class="role">Full-Stack Engineer | AI Product Builder</div>
+    <div class="contact">
+      <span>India</span><span>|</span><span>+91-9507860094</span><span>|</span>
+      <a href="mailto:hrsa.kshyp@gmail.com">hrsa.kshyp@gmail.com</a><span>|</span>
+      <a href="https://www.linkedin.com/in/harshita-kshyp/">LinkedIn</a><span>|</span>
+      <a href="https://github.com/hrshita-kshyp">GitHub</a><span>|</span>
+      <a href="https://hrshita.online">hrshita.online</a>
+    </div>
+  </header>
+
+  <p class="summary">Full-stack engineer with 3+ years of experience building production systems and AI-powered products. At TCS, developed and hardened Node.js services, authentication flows, integrations, and Angular modules for a healthcare platform serving 500+ enterprise clients. Previously delivered full-stack applications and data systems independently for multiple clients. Comfortable owning products from architecture through deployment. <strong>Available to join immediately.</strong></p>
+
+  <h2>Skills</h2>
+  <div class="skills">
+    <div class="skill-line"><strong>Backend:</strong> Node.js, Express, Java, Python, FastAPI, REST APIs, session authentication, microservices</div>
+    <div class="skill-line"><strong>Frontend:</strong> JavaScript, TypeScript, React, Angular, HTML, CSS, Tailwind CSS</div>
+    <div class="skill-line"><strong>Data & Cloud:</strong> PostgreSQL, MongoDB, Supabase, Redis, Docker, AWS, Vercel, CI/CD</div>
+    <div class="skill-line"><strong>AI & Tools:</strong> OpenAI, Groq/Llama 3.3, Gemini, prompt engineering, Claude Code, Cursor, Codex, Git, Jest</div>
+  </div>
+
+  <h2>Experience</h2>
+  <div class="entry">
+    <div class="entry-head"><span class="entry-title">System Engineer</span><span class="entry-date">Oct 2024 - Jul 2026</span></div>
+    <div class="entry-sub"><span>Tata Consultancy Services</span><span></span></div>
+    <ul>
+      <li>Built and maintained Node.js APIs and cookie-based session authentication for a healthcare platform serving 500+ enterprise clients.</li>
+      <li>Developed third-party integrations and reliable data flows between backend services and external systems.</li>
+      <li>Expanded Jest coverage across backend modules, reducing regressions and improving release confidence.</li>
+      <li>Owned the end-to-end migration of legacy frontend modules to Angular 21 while coordinating related API changes.</li>
+      <li>Improved performance by 20% through API compression and NGINX routing fixes identified and delivered independently.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="entry-head"><span class="entry-title">Freelance Full-Stack Engineer</span><span class="entry-date">Jan 2022 - Sep 2024</span></div>
+    <div class="entry-sub"><span>Independent Consulting - Multiple Clients</span><span></span></div>
+    <ul>
+      <li>Delivered full-stack web applications, internal tools, dashboards, and data systems end-to-end for international and small-business clients.</li>
+      <li>Built real-time data platforms and REST integrations with React, Node.js, PostgreSQL, and MongoDB.</li>
+      <li>Managed discovery, technical scoping, client communication, implementation, and delivery as the direct technical owner.</li>
+    </ul>
+  </div>
+
+  <h2>Selected Projects</h2>
+  <div class="entry">
+    <div class="entry-head"><span class="entry-title">ApplyWise - Job Application Copilot</span><a class="project-link" href="https://get-applywise.vercel.app/">Live product</a></div>
+    <ul>
+      <li>Built a local-first Chrome MV3 extension that parses resumes, evaluates job fit, identifies missing qualifications, and fills repetitive ATS fields.</li>
+      <li>Designed approval-based Answer Memory and pre-submit validation while preventing storage of sensitive fields and automated submission.</li>
+    </ul>
+  </div>
+  <div class="entry">
+    <div class="entry-head"><span class="entry-title">Vyntra - AI-Powered Health Intelligence Platform</span><a class="project-link" href="https://vyntra-delta.vercel.app">Live demo</a></div>
+    <ul>
+      <li>Architected and shipped a full-stack health platform with React 19, Supabase authentication and real-time sync, and Groq-hosted Llama 3.3 70B insights.</li>
+      <li>Built biometric dashboards for HRV, strain, and recovery trends with animated data visualization.</li>
+    </ul>
+  </div>
+
+  <h2>Education</h2>
+  <div class="education"><span><strong>B.Tech in Civil Engineering</strong> - BIT Sindri, Jharkhand</span><span><strong>2020 - 2024</strong> | CGPA: 8.6/10</span></div>
+
+  <h2>Certifications & Recognition</h2>
+  <div class="certs"><span>Google Generative AI Leader</span><span>Google Cloud Platform Fundamentals</span><span>Recognized by TCS for frontend modernization work</span></div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:hrshita.online)",
+      "Bash(git fetch *)",
+      "Read(//c/Users/Home/Desktop/portfolio/**)",
+      "Bash(git rev-list *)",
+      "Bash(git ls-tree *)",
+      "Bash(git pull *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(node -e \"require\\('./server.js'\\)\")",
+      "Bash(curl -s -o /dev/null -w \"index: %{http_code} %{size_download} bytes\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"ghchart: %{http_code} %{content_type}\\\\n\" \"https://ghchart.rshah.org/1E3A5F/hrshita-kshyp\")",
+      "Bash(curl -s -o /dev/null -w \"resume.pdf: %{http_code}\\\\n\" http://localhost:3000/resume.pdf)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(node server.js)",
+      "Bash(curl -s -o /dev/null -w \"GET /resume.pdf -> %{http_code} %{content_type} %{size_download} bytes\\\\n\" http://localhost:3000/resume.pdf)",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(curl -sI https://hrshita.online/)",
+      "Bash(curl -sI https://hrshita.online/resume.pdf)",
+      "Bash(curl -sIL https://hrshita.online/resume.pdf)",
+      "WebFetch(domain:x.com)",
+      "Bash(curl -s -o /dev/null -w 'status=%{http_code} type=%{content_type} size=%{size_download}\\\\n' -H 'User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 Chrome/126 Safari/537.36' https://syndication.twitter.com/srv/timeline-profile/screen-name/hrshita_kshyp)",
+      "Bash(curl -s -o /dev/null -w \"x.com profile: %{http_code}\\\\n\" -H \"User-Agent: Mozilla/5.0\" https://x.com/hrshita_kshyp)",
+      "Bash(curl -s -o /dev/null -w \"widgets.js: %{http_code} %{size_download} bytes\\\\n\" https://platform.twitter.com/widgets.js)",
+      "Bash(grep -o '\"full_text\":\"[^\"]\\\\{0,150\\\\}' tl.html)",
+      "Bash(git diff *)"
+    ]
+  }
+}

@@ -540,7 +540,9 @@
       .card .links {
         margin-top: auto;
         padding-top: 1.1rem;
-        gap: 1.1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.65rem;
       }
 
       /* ---------- github ---------- */
@@ -1485,17 +1487,14 @@
               <div class="card-index">01</div>
               <h3>Verum — Outreach Agent</h3>
               <p>
-                An outreach agent that only sends what it can prove. It
-                researches a company from primary sources and puts every lead
-                through 11 checks: a named decision-maker, a published route to
-                them, and a dated reason to write. Only then does it draft a
-                short email built from sourced facts.
+                An outreach agent that only sends what it can prove — a named
+                decision-maker, a published route to them, a dated reason to
+                write. 11 checks gate every send.
               </p>
               <p>
-                It runs unattended on scheduled cloud sessions with no memory
-                of their own. All state lives on a git branch, so a crashed run
-                can never double-send. It's being tested on my own company,
-                Ranuvo, first.
+                Runs unattended on scheduled cloud sessions. State lives on a
+                git branch, so a crashed run can never double-send. Being
+                tested on my own company, Ranuvo, first.
               </p>
               <div class="pills">
                 <span class="pill">Claude agents</span>
@@ -1592,14 +1591,13 @@
               <h3>DataSync — Data Freshness SaaS</h3>
               <p>
                 Started as an alumni portal, now becoming an embeddable
-                widget that keeps any organization's user data fresh with
+                widget that keeps any organization's data fresh with
                 one-click "still true" confirmations instead of ignored
                 reminder emails.
               </p>
               <p>
-                Next.js 14, Supabase auth and Postgres, a weekly GitHub
-                Actions reminder job with a dry-run mode built in from day
-                one.
+                Next.js 14, Supabase, weekly GitHub Actions reminder job
+                with a dry-run mode built in from day one.
               </p>
               <div class="pills">
                 <span class="pill">Next.js</span>

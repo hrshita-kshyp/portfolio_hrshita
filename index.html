@@ -458,6 +458,21 @@
         border-color: var(--line-strong);
       }
 
+      .card-cover {
+        margin: -1.5rem -1.5rem 0.35rem;
+        border-bottom: 1px solid var(--line);
+        overflow: hidden;
+      }
+
+      .card-cover img {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1000 / 557;
+        object-fit: cover;
+        object-position: top;
+      }
+
       .card-index {
         font-family: var(--mono);
         font-size: 0.75rem;
@@ -1459,7 +1474,7 @@
           </p>
           <div class="status">
             <span class="dot"></span>
-            <span>Recently at TCS</span>
+            <span>Building Ranuvo</span>
             <span class="sep">·</span>
             <span>Building ApplyWise</span>
             <span class="sep">·</span>
@@ -1571,6 +1586,38 @@
 
           <div class="project-scroll">
             <article class="card reveal">
+              <div class="card-cover">
+                <img
+                  src="/assets/ranuvo-preview.jpg"
+                  alt="Screenshot of the Ranuvo homepage"
+                  loading="lazy"
+                  width="1000"
+                  height="557"
+                />
+              </div>
+              <div class="card-index">00</div>
+              <h3>Ranuvo — My Company</h3>
+              <p>
+                Business technology, automation, and AI for companies whose
+                internal tools haven't kept up. ApplyWise and Verum are
+                Ranuvo products, built and shipped under it.
+              </p>
+              <div class="links">
+                <a
+                  class="link"
+                  href="https://ranuvo.tech"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Visit ranuvo.tech
+                  <svg class="icon">
+                    <use href="#i-arrow-up-right" />
+                  </svg>
+                </a>
+              </div>
+            </article>
+
+            <article class="card reveal">
               <div class="card-index">01</div>
               <h3>Verum — Outreach Agent</h3>
               <p>
@@ -1605,17 +1652,6 @@
                 </a>
                 <a class="link" href="/blog/verum-deep-dive">
                   Engineering deep dive
-                  <svg class="icon">
-                    <use href="#i-arrow-up-right" />
-                  </svg>
-                </a>
-                <a
-                  class="link"
-                  href="https://ranuvo.tech"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Visit Ranuvo
                   <svg class="icon">
                     <use href="#i-arrow-up-right" />
                   </svg>

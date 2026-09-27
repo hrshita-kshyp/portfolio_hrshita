@@ -205,6 +205,43 @@
         grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
       }
 
+      /* ---------- project scroller ---------- */
+      .project-scroll {
+        display: flex;
+        gap: 1.25rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        margin: 0 calc(-1 * clamp(1.25rem, 5vw, 2.5rem));
+        padding-inline: clamp(1.25rem, 5vw, 2.5rem);
+        scroll-snap-type: x proximity;
+        scrollbar-width: thin;
+        scrollbar-color: var(--line-strong) transparent;
+      }
+
+      .project-scroll .card {
+        flex: 0 0 clamp(320px, 34vw, 420px);
+        scroll-snap-align: start;
+      }
+
+      .project-scroll::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      .project-scroll::-webkit-scrollbar-thumb {
+        background: var(--line-strong);
+        border-radius: 999px;
+      }
+
+      .project-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      @media (max-width: 700px) {
+        .project-scroll .card {
+          flex-basis: min(88vw, 380px);
+        }
+      }
+
       /* ---------- nav ---------- */
       .nav {
         position: sticky;
@@ -600,6 +637,49 @@
       .timeline-fallback a {
         text-decoration: underline;
         text-underline-offset: 3px;
+      }
+
+      /* ---------- writing ---------- */
+      .post-list {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .post-row {
+        display: block;
+        padding: 1.5rem 0;
+        border-top: 1px solid var(--line);
+        color: var(--text);
+      }
+
+      .post-row:last-child {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .post-row-title {
+        font-family: var(--serif);
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        transition: color 0.18s ease;
+      }
+
+      .post-row:hover .post-row-title {
+        color: var(--accent);
+      }
+
+      .post-row-desc {
+        color: var(--muted);
+        margin-top: 0.5rem;
+        font-size: 0.96rem;
+        max-width: 62ch;
+      }
+
+      .post-row-meta {
+        margin-top: 0.65rem;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        color: var(--muted);
       }
 
       /* ---------- skills ---------- */
@@ -1342,9 +1422,8 @@
         <a href="#top" class="wordmark">harshita</a>
         <nav class="nav-links">
           <a href="#work">work</a>
-          <a href="#about" data-optional-sm>about</a>
           <a href="#skills" data-optional>skills</a>
-          <a href="/blog/">writing</a>
+          <a href="#writing">writing</a>
           <a href="#contact">contact</a>
           <a href="/resume.pdf" class="nav-cta" target="_blank" rel="noopener"
             >résumé</a
@@ -1430,6 +1509,14 @@
           </div>
 
           <article class="featured reveal">
+            <a
+              class="pill"
+              style="display: inline-flex; width: fit-content"
+              href="https://ranuvo.tech"
+              target="_blank"
+              rel="noopener"
+              >A Ranuvo product ↗</a
+            >
             <h3 class="featured-title">
               ApplyWise — Your Job Application Copilot
             </h3>
@@ -1482,7 +1569,7 @@
             <h2 class="section-title">Other things I've shipped</h2>
           </div>
 
-          <div class="grid">
+          <div class="project-scroll">
             <article class="card reveal">
               <div class="card-index">01</div>
               <h3>Verum — Outreach Agent</h3>
@@ -1493,7 +1580,10 @@
               </p>
               <p>
                 Runs unattended, state on a git branch. Being tested on my
-                own company, Ranuvo, first.
+                own company,
+                <a href="https://ranuvo.tech" target="_blank" rel="noopener"
+                  >Ranuvo</a
+                >, first.
               </p>
               <div class="pills">
                 <span class="pill">Claude agents</span>
@@ -1515,6 +1605,17 @@
                 </a>
                 <a class="link" href="/blog/verum-deep-dive">
                   Engineering deep dive
+                  <svg class="icon">
+                    <use href="#i-arrow-up-right" />
+                  </svg>
+                </a>
+                <a
+                  class="link"
+                  href="https://ranuvo.tech"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Visit Ranuvo
                   <svg class="icon">
                     <use href="#i-arrow-up-right" />
                   </svg>
@@ -1615,46 +1716,6 @@
         </div>
       </section>
 
-      <!-- ---------- about ---------- -->
-      <section id="about">
-        <div class="wrap">
-          <div class="section-head reveal">
-            <div class="eyebrow">About</div>
-            <h2 class="section-title">How I got here</h2>
-          </div>
-          <div class="grid">
-            <article class="card reveal">
-              <div class="card-index">01</div>
-              <h3>Self-Taught, End-to-End</h3>
-              <p>
-                No CS degree. I taught myself full-stack development and have
-                spent 2+ years building production software. I'd rather own a
-                problem completely than hand off half of it.
-              </p>
-            </article>
-            <article class="card reveal">
-              <div class="card-index">02</div>
-              <h3>AI-Native Builder</h3>
-              <p>
-                I design and ship LLM-powered products solo — prompt
-                engineering, model selection, evaluation, and deployment. Vyntra
-                is the live proof, not a side experiment.
-              </p>
-            </article>
-            <article class="card reveal">
-              <div class="card-index">03</div>
-              <h3>Enterprise + Independent</h3>
-              <p>
-                At TCS, I owned frontend migrations on a healthcare platform
-                serving 500+ enterprise clients. Now independent, I take on
-                client work and ship my own products, while looking for the next
-                full-time role.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
       <!-- ---------- github ---------- -->
       <section id="github">
         <div class="wrap">
@@ -1693,16 +1754,61 @@
       </section>
 
       <!-- ---------- x timeline ---------- -->
+      <!-- ---------- writing ---------- -->
+      <section id="writing">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div class="eyebrow">Writing</div>
+            <h2 class="section-title">Engineering deep dives</h2>
+            <p class="section-lede">
+              What the code actually does, not the pitch version.
+            </p>
+          </div>
+          <div class="post-list reveal">
+            <a class="post-row" href="/blog/verum-deep-dive">
+              <div class="post-row-title">
+                Verum: an outreach agent that's only allowed to send what it
+                can prove
+              </div>
+              <p class="post-row-desc">
+                Eleven gates, a Sent-folder-as-truth state design, and why a
+                guessed email address is never worth the reply rate.
+              </p>
+              <div class="post-row-meta">Sep 2026 · 5 min read</div>
+            </a>
+            <a class="post-row" href="/blog/applywise-deep-dive">
+              <div class="post-row-title">
+                ApplyWise: the AI never gets to say something I didn't tell
+                it
+              </div>
+              <p class="post-row-desc">
+                Local-first storage, a schema-enforced
+                <code>needs_user_input</code>, and why it never clicks
+                Submit.
+              </p>
+              <div class="post-row-meta">Sep 2026 · 4 min read</div>
+            </a>
+            <a class="post-row" href="/blog/datasync-deep-dive">
+              <div class="post-row-title">
+                DataSync: I built the wrong product first, on purpose
+              </div>
+              <p class="post-row-desc">
+                An alumni portal, one timestamp column, and the dry-run flag
+                that saved me from mailing three hundred people by accident.
+              </p>
+              <div class="post-row-meta">Sep 2026 · 3 min read</div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- x timeline ---------- -->
       <section id="posts">
         <div class="wrap">
           <div class="section-head reveal">
             <div class="eyebrow">Latest</div>
             <h2 class="section-title">Building in public</h2>
-            <p class="section-lede">
-              Recent posts from @hrshita_kshyp, and
-              <a class="link" href="/blog/">longer engineering write-ups</a>
-              on the site.
-            </p>
+            <p class="section-lede">Recent posts from @hrshita_kshyp.</p>
           </div>
           <div class="timeline-panel reveal">
             <div class="timeline-mount" id="xTimeline">

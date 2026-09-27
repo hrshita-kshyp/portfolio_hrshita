@@ -59,7 +59,7 @@
         <div class="post-eyebrow" style="margin-top: 1.4rem">Engineering deep dive</div>
         <h1 class="post-title">DataSync: I built the wrong product first, on purpose</h1>
         <div class="post-meta">
-          <span>Sep 2026</span><span class="sep">·</span><span>6 min read</span>
+          <span>Sep 2026</span><span class="sep">·</span><span>3 min read</span>
         </div>
         <div class="post-tags">
           <span class="pill">Next.js</span>
@@ -72,29 +72,25 @@
         <div class="prose">
           <p>I started DataSync as an alumni portal. It's a data-freshness SaaS now, and getting from one to the other is the actual story.</p>
 
-          <h2>The problem that doesn't look like a problem</h2>
-          <p>Every alumni network, every CRM, every HR directory has the same quiet failure mode: the data was correct once. Someone changed jobs, moved cities, got a new number, and nobody updated the record. Six months later 40% of it is stale, and nobody notices until they need it — a reunion mailer that bounces, a "recent grads" report that's wrong, an emergency contact that isn't.</p>
-          <p>The fix everyone reaches for is "send a reminder email asking people to update their info." It doesn't work. Nobody opens a cold email that says "please verify your details." It reads as spam even when it isn't.</p>
-          <p>So I built the alumni portal first, because it's a concrete version of the problem with a real audience I could reason about.</p>
+          <h2>The problem</h2>
+          <p>Every alumni network, CRM, or HR directory has the same quiet failure: data was correct once, then nobody updated it. Six months later 40% of it is stale, and nobody notices until a mailer bounces or an emergency contact isn't real anymore. "Please verify your details" reminder emails don't fix this — nobody opens them. So I built a real instance of the problem first, with a real audience, instead of guessing at the abstract version.</p>
 
           <h2>What's actually there</h2>
-          <p>It's a Next.js 14 app on the App Router, Supabase for auth and Postgres, deployed on Vercel. Nothing exotic in the stack — the point was never the stack.</p>
-          <p>Auth is Supabase's own: sign up, confirm email, sign in, redirect. On sign-up, a server route creates a blank <code>profiles</code> row keyed to the user's id, so there's never a user without a profile to fill in. The profile page pulls that row, lets someone edit name, batch, and company, and calls a server route to save it. Every save stamps <code>last_verified</code> with the current timestamp. That column is the whole idea — it's not "did they ever fill this in," it's "how long ago did a human confirm this is still true."</p>
-          <p>There's a second button next to Save: <strong>Data is same</strong>. If nothing's changed, you don't have to re-type your own name to prove it — one click stamps <code>last_verified</code> without touching the fields. That button is the thing that makes the reminder emails work later, because it turns "update your profile" (effort, friction, a form) into "still true, yes/no" (one tap). People will do the second one.</p>
+          <p>Next.js 14, Supabase for auth and Postgres, deployed on Vercel — nothing exotic, the point was never the stack. On sign-up, a server route creates a blank <code>profiles</code> row so there's never a user without one. Every profile save stamps <code>last_verified</code> with the current timestamp — not "did they fill this in," but "how long ago did a human confirm it's still true."</p>
+          <p>Next to Save sits a second button: <strong>Data is same</strong>. One click stamps <code>last_verified</code> without touching a single field. That's the part that makes reminders work — it turns "update your profile" (a form, friction) into "still true, yes/no" (one tap). People do the second one.</p>
 
           <h2>The reminder job</h2>
-          <p>A GitHub Actions workflow runs every Sunday at 09:00 UTC and calls <code>send_reminders.js</code>. It queries Supabase directly with the service role key — no API route in between, since it's a scheduled job, not a user action — for any profile where <code>last_verified</code> is null or older than six months, and where the last reminder itself was sent more than six months ago (so it doesn't nag someone every week forever). It emails through SendGrid, and every send updates <code>last_reminder_sent</code> so the same person doesn't get hit twice in one run.</p>
-          <p>I wrote it with a <code>--dry</code> flag from day one: run it locally, print who <em>would</em> get emailed, send nothing. I did not want to find out the query logic was wrong by mailing three hundred alumni at 9am on a Sunday.</p>
+          <p>A GitHub Actions workflow runs every Sunday and calls <code>send_reminders.js</code>, which queries Supabase directly with the service role key for any profile unverified in six months — and skips anyone reminded within the last six, so nobody gets nagged weekly. It sends through SendGrid and stamps <code>last_reminder_sent</code> on every send.</p>
+          <p>It's had a <code>--dry</code> flag since day one: print who <em>would</em> get emailed, send nothing. I did not want to find out the query was wrong by mailing three hundred alumni at 9am on a Sunday.</p>
 
-          <h2>Where it's actually going</h2>
-          <p>The alumni portal is single-tenant — one organization, one Supabase project. The rewrite in progress is multi-tenant: an org signs up, gets an API key, drops a script tag on their own site, and the widget renders a data-portal for their users without them touching a database.</p>
+          <h2>Where it's going</h2>
+          <p>The current app is single-tenant. The rewrite is multi-tenant: an org signs up, gets an API key, drops a script tag on their own site.</p>
           <pre><code>&lt;script src="https://mysaas.com/sdk.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   DataSync.init({ apiKey: 'your_api_key', containerId: 'data-portal' });
 &lt;/script&gt;
 &lt;div id="data-portal"&gt;&lt;/div&gt;</code></pre>
-          <p>That's the part that actually needs the alumni portal to have existed first. Row-level security policies, custom field configuration, white-label branding — none of that is guessable in the abstract. I know <code>last_verified</code> and <code>last_reminder_sent</code> matter because I watched them matter on a real dataset with a few hundred real people in it. The next version generalizes those two columns into whatever fields an org configures, keeps the "one-click confirm" pattern because that's the part that got replies, and turns the whole thing into something you embed instead of something you fork.</p>
-          <p>Alumni networks, healthcare intake, HR directories, association memberships — different shapes of the same failure. Build one instance properly, then find out what has to be configurable, not guessed.</p>
+          <p>That needed the alumni portal to exist first — I know <code>last_verified</code> and the one-click confirm matter because I watched them matter on real people, not because I guessed. Alumni networks, healthcare intake, HR directories, membership associations — different shapes of the same failure. Build one instance properly, then find out what has to be configurable.</p>
         </div>
 
         <div class="post-footer">

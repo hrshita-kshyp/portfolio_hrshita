@@ -59,7 +59,7 @@
         <div class="post-eyebrow" style="margin-top: 1.4rem">Engineering deep dive</div>
         <h1 class="post-title">ApplyWise: the AI never gets to say something I didn't tell it</h1>
         <div class="post-meta">
-          <span>Sep 2026</span><span class="sep">·</span><span>7 min read</span>
+          <span>Sep 2026</span><span class="sep">·</span><span>4 min read</span>
         </div>
         <div class="post-tags">
           <span class="pill">Chrome MV3</span>
@@ -72,29 +72,28 @@
         </div>
 
         <div class="prose">
-          <p>Every job-application tool eventually has to answer one question honestly: what happens when it doesn't know the answer? Most of them guess, and the guess looks confident enough that people submit it. I built ApplyWise to fail loudly at that moment instead — flag the field, ask you, and move on. "Finish applications faster, without fake AI answers" isn't a tagline I bolted on after; it's the actual constraint I built the whole thing around, and it shows up everywhere from the JSON schema on the server to the list of fields the extension refuses to remember.</p>
+          <p>Every job-application tool has to answer one question honestly: what happens when it doesn't know the answer? Most guess, confidently enough that people submit it. ApplyWise fails loudly instead — flags the field, asks you, moves on. "No fake AI answers" isn't a tagline; it's the constraint the JSON schema and the exclusion list are both built around.</p>
 
-          <h2>Local-first isn't a checkbox, it's the whole architecture</h2>
-          <p>It's a Chrome MV3 extension. <code>chrome.storage.local</code> holds your parsed résumé, your career profile, your tracker, and Answer Memory — the growing set of question-and-answer pairs it's allowed to reuse. During the private beta none of that leaves the browser. There's no ApplyWise server holding your résumé, because there doesn't need to be one for the extension to do its job: analyze the page you're already on, fill the fields you're already looking at.</p>
-          <p>That constrains the resume parsing, too — it has to happen in the browser, so it runs on PDF.js compiled to run client-side, no upload, no server round trip to extract your own text from your own file.</p>
+          <h2>Local-first is the whole architecture</h2>
+          <p>It's a Chrome MV3 extension. <code>chrome.storage.local</code> holds your résumé, profile, tracker, and Answer Memory — none of it leaves the browser during the beta. No server needs to hold your résumé for the extension to analyze the page you're on. Resume parsing runs client-side too, on PDF.js compiled for the browser — no upload, no round trip to extract your own text from your own file.</p>
 
           <h2>Answer Memory only learns what you taught it</h2>
-          <p>The core loop is deliberately not "AI fills your form." It's: you fill a field once, by hand, for a non-sensitive question. You reopen the popup and press <strong>Remember answers</strong>. Only then does that question-answer pair enter memory, and only then can it get reused later — and every reuse is a suggestion the extension highlights for your review, never something it silently submits.</p>
-          <p>There's a hard exclusion list baked in regardless of what you approve: passwords, CAPTCHA responses, government IDs, birth dates, demographic and disability/veteran questions, salary fields. Those never enter Answer Memory even if you tried to teach them, because those are exactly the fields where a wrong autofill does real damage, and where "the user approved it once" isn't a good enough reason to keep repeating it.</p>
+          <p>Not "AI fills your form" — you fill a field once by hand, reopen the popup, press <strong>Remember answers</strong>. Only then does it enter memory, and every reuse afterward is a suggestion you review, never something silently submitted.</p>
+          <p>A hard exclusion list applies regardless of what you approve: passwords, CAPTCHA, government IDs, birth dates, demographic and disability/veteran questions, salary. Those never enter memory, because those are exactly the fields where a wrong autofill does real damage.</p>
 
-          <h2>The multi-stage problem nobody mentions</h2>
-          <p>ATS forms don't render as one page. Workday, Greenhouse, and the rest reveal new fields as you move through a flow — education after experience, references after education — and a one-shot "fill the page" pass misses all of it, because those fields don't exist in the DOM yet when you click Fill. ApplyWise's content script keeps watching for newly-rendered recognized fields for fifteen minutes after you press Fill, so it catches the second and third stage without you re-triggering it every time a new section appears. You still click Continue, Save, or Submit yourself, every time — the extension fills, it never advances the form on your behalf.</p>
+          <h2>The multi-stage problem</h2>
+          <p>ATS forms reveal new fields as you move through a flow — education after experience, references after that — and a one-shot fill pass misses fields that don't exist in the DOM yet. The content script keeps watching for newly-rendered recognized fields for fifteen minutes after you press Fill. You still click Continue, Save, or Submit yourself, every time.</p>
 
-          <h2>Job matching that shows its work instead of scoring you</h2>
-          <p>The "job fit" side isn't a hidden score. It reads the job post, reads your profile, and produces a match summary structured as explicit strengths and explicit gaps — skills you have that line up, requirements you don't clearly meet — so you can look at <em>why</em> before deciding whether to spend twenty minutes on an application. It's explicitly not framed as an ATS or hiring prediction, because it isn't one and I didn't want it read as one.</p>
+          <h2>Job matching shows its work</h2>
+          <p>Not a hidden score. It reads the job and your profile, and produces explicit strengths and explicit gaps, so you decide <em>why</em> before spending twenty minutes on an application — not framed as a hiring prediction, because it isn't one.</p>
 
-          <h2>Where the AI actually sits, and the schema that boxes it in</h2>
-          <p>There's a small server behind the paid tier, used only when generating a fuller application kit — a cover letter, a resume summary, screening-question answers — from the résumé plus the job. It calls OpenAI with a strict JSON schema response format, and the instructions given to the model aren't a style suggestion, they're the actual guardrail: use only facts present in the candidate profile, never invent skills, employers, dates, or credentials, and mark any answer as <code>needs_user_input</code> whenever the profile doesn't contain the fact needed to answer it honestly. <code>needs_user_input</code> isn't a fallback error state — it's a required field in the schema itself. The model has to output it explicitly for anything it can't back up, and it's schema-enforced, not just prompted for and hoped.</p>
-          <p>Account data on that server side is encrypted at rest — AES-256-GCM, scrypt-derived password hashes with timing-safe comparison — because a stripped-down job-search side project holding résumés and personal answers is still a thing worth protecting properly, not something to shortcut because it's early and small.</p>
+          <h2>Where the AI sits, and the schema that boxes it in</h2>
+          <p>A small server behind the paid tier generates a fuller kit — cover letter, resume summary, screening answers — calling OpenAI with a strict JSON schema. The instructions are the actual guardrail: use only facts in the profile, never invent skills or dates, and mark any answer <code>needs_user_input</code> whenever the profile lacks the fact. That field is schema-required, not just prompted for — the model has to output it explicitly for anything it can't back up.</p>
+          <p>Account data on the server is encrypted at rest — AES-256-GCM, scrypt password hashes with timing-safe comparison — because a small side project holding résumés is still worth protecting properly.</p>
 
-          <h2>What "never clicks Submit" actually buys you</h2>
-          <p>The extension has three permissions: <code>storage</code>, <code>activeTab</code>, <code>scripting</code>. No host permissions beyond the tab you're already on, no background page reading your browsing, and — the constraint I keep coming back to — it does not click Submit, ever, on any form, under any setting. Every fill is reviewable and reversible before a human commits to it. That's the difference between a copilot and an autopilot, and it's the reason I'm comfortable calling this "user-controlled filling" instead of "auto-apply," even though auto-apply is the easier thing to market.</p>
-          <p>It's in private beta now, distribution paused while early access gets set up properly — not because the tech doesn't work, but because I'd rather ship the guardrails correctly to a small group first than scale a mistake to everyone at once.</p>
+          <h2>What "never clicks Submit" buys</h2>
+          <p>Three permissions: <code>storage</code>, <code>activeTab</code>, <code>scripting</code>. No host permissions beyond the tab you're on, and it does not click Submit, ever, under any setting. Every fill is reviewable before a human commits to it — the difference between a copilot and an autopilot, even though "auto-apply" is the easier thing to market.</p>
+          <p>It's in private beta now, distribution paused while early access gets set up properly — not because the tech doesn't work, but because the guardrails deserve a small group first.</p>
         </div>
 
         <div class="post-footer">

@@ -7,7 +7,8 @@
             "config": {
                 "includeFiles": [
                     "index.html",
-                    "resume.pdf"
+                    "resume.pdf",
+                    "blog/**"
                 ]
             }
         }

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DataSync: I built the wrong product first, on purpose — Harshita Kashyap</title>
+    <meta
+      name="description"
+      content="How an alumni portal, one timestamp column, and a --dry flag became the prototype for an embeddable data-freshness SaaS."
+    />
+    <meta property="og:title" content="DataSync: I built the wrong product first, on purpose" />
+    <meta property="og:description" content="How an alumni portal, one timestamp column, and a --dry flag became the prototype for an embeddable data-freshness SaaS." />
+    <meta property="og:type" content="article" />
+    <meta name="theme-color" content="#F6F1E7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16140F" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/blog/blog.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.setAttribute("data-theme", saved);
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <svg style="display: none" aria-hidden="true">
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.3A9 9 0 0 1 10.7 3a9 9 0 1 0 10.3 10.3Z" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5a1 1 0 0 1-1-1V1a1 1 0 1 1 2 0v1.5a1 1 0 0 1-1 1Zm0 19a1 1 0 0 1-1-1V20a1 1 0 1 1 2 0v1.5a1 1 0 0 1-1 1ZM22.5 13H21a1 1 0 1 1 0-2h1.5a1 1 0 1 1 0 2ZM3 13H1.5a1 1 0 1 1 0-2H3a1 1 0 1 1 0 2Zm16.4-7.9-1 1a1 1 0 1 1-1.5-1.4l1-1a1 1 0 0 1 1.5 1.4ZM6.1 18.4l-1 1a1 1 0 1 1-1.5-1.4l1-1a1 1 0 0 1 1.5 1.4Zm13.3 1-1-1a1 1 0 1 1 1.4-1.4l1 1a1 1 0 0 1-1.4 1.4ZM4.6 6.1l-1-1a1 1 0 0 1 1.4-1.4l1 1A1 1 0 0 1 4.6 6.1Z" /></symbol>
+    </svg>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a href="/#top" class="wordmark">harshita</a>
+        <nav class="nav-links">
+          <a href="/#work">work</a>
+          <a href="/blog/">writing</a>
+          <a href="/#contact">contact</a>
+          <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch colour theme">
+            <svg class="icon icon-moon"><use href="#i-moon" /></svg>
+            <svg class="icon icon-sun"><use href="#i-sun" /></svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <a class="back-link" href="/blog/">← back to writing</a>
+
+        <div class="post-eyebrow" style="margin-top: 1.4rem">Engineering deep dive</div>
+        <h1 class="post-title">DataSync: I built the wrong product first, on purpose</h1>
+        <div class="post-meta">
+          <span>Sep 2026</span><span class="sep">·</span><span>6 min read</span>
+        </div>
+        <div class="post-tags">
+          <span class="pill">Next.js</span>
+          <span class="pill">Supabase</span>
+          <span class="pill">Postgres</span>
+          <span class="pill">GitHub Actions</span>
+          <span class="pill">SendGrid</span>
+        </div>
+
+        <div class="prose">
+          <p>I started DataSync as an alumni portal. It's a data-freshness SaaS now, and getting from one to the other is the actual story.</p>
+
+          <h2>The problem that doesn't look like a problem</h2>
+          <p>Every alumni network, every CRM, every HR directory has the same quiet failure mode: the data was correct once. Someone changed jobs, moved cities, got a new number, and nobody updated the record. Six months later 40% of it is stale, and nobody notices until they need it — a reunion mailer that bounces, a "recent grads" report that's wrong, an emergency contact that isn't.</p>
+          <p>The fix everyone reaches for is "send a reminder email asking people to update their info." It doesn't work. Nobody opens a cold email that says "please verify your details." It reads as spam even when it isn't.</p>
+          <p>So I built the alumni portal first, because it's a concrete version of the problem with a real audience I could reason about.</p>
+
+          <h2>What's actually there</h2>
+          <p>It's a Next.js 14 app on the App Router, Supabase for auth and Postgres, deployed on Vercel. Nothing exotic in the stack — the point was never the stack.</p>
+          <p>Auth is Supabase's own: sign up, confirm email, sign in, redirect. On sign-up, a server route creates a blank <code>profiles</code> row keyed to the user's id, so there's never a user without a profile to fill in. The profile page pulls that row, lets someone edit name, batch, and company, and calls a server route to save it. Every save stamps <code>last_verified</code> with the current timestamp. That column is the whole idea — it's not "did they ever fill this in," it's "how long ago did a human confirm this is still true."</p>
+          <p>There's a second button next to Save: <strong>Data is same</strong>. If nothing's changed, you don't have to re-type your own name to prove it — one click stamps <code>last_verified</code> without touching the fields. That button is the thing that makes the reminder emails work later, because it turns "update your profile" (effort, friction, a form) into "still true, yes/no" (one tap). People will do the second one.</p>
+
+          <h2>The reminder job</h2>
+          <p>A GitHub Actions workflow runs every Sunday at 09:00 UTC and calls <code>send_reminders.js</code>. It queries Supabase directly with the service role key — no API route in between, since it's a scheduled job, not a user action — for any profile where <code>last_verified</code> is null or older than six months, and where the last reminder itself was sent more than six months ago (so it doesn't nag someone every week forever). It emails through SendGrid, and every send updates <code>last_reminder_sent</code> so the same person doesn't get hit twice in one run.</p>
+          <p>I wrote it with a <code>--dry</code> flag from day one: run it locally, print who <em>would</em> get emailed, send nothing. I did not want to find out the query logic was wrong by mailing three hundred alumni at 9am on a Sunday.</p>
+
+          <h2>Where it's actually going</h2>
+          <p>The alumni portal is single-tenant — one organization, one Supabase project. The rewrite in progress is multi-tenant: an org signs up, gets an API key, drops a script tag on their own site, and the widget renders a data-portal for their users without them touching a database.</p>
+          <pre><code>&lt;script src="https://mysaas.com/sdk.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  DataSync.init({ apiKey: 'your_api_key', containerId: 'data-portal' });
+&lt;/script&gt;
+&lt;div id="data-portal"&gt;&lt;/div&gt;</code></pre>
+          <p>That's the part that actually needs the alumni portal to have existed first. Row-level security policies, custom field configuration, white-label branding — none of that is guessable in the abstract. I know <code>last_verified</code> and <code>last_reminder_sent</code> matter because I watched them matter on a real dataset with a few hundred real people in it. The next version generalizes those two columns into whatever fields an org configures, keeps the "one-click confirm" pattern because that's the part that got replies, and turns the whole thing into something you embed instead of something you fork.</p>
+          <p>Alumni networks, healthcare intake, HR directories, association memberships — different shapes of the same failure. Build one instance properly, then find out what has to be configurable, not guessed.</p>
+        </div>
+
+        <div class="post-footer">
+          <a class="back-link" href="/blog/">← all posts</a>
+          <a class="back-link" href="/#contact">get in touch →</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <span>© 2026 Harshita Kashyap</span>
+        <span>Built and deployed by hand</span>
+      </div>
+    </footer>
+
+    <script>
+      function activeTheme() {
+        return (
+          document.documentElement.getAttribute("data-theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        );
+      }
+      var toggle = document.getElementById("themeToggle");
+      if (toggle) {
+        toggle.addEventListener("click", function () {
+          var next = activeTheme() === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          try { localStorage.setItem("theme", next); } catch (e) {}
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verum: an outreach agent that's only allowed to send what it can prove — Harshita Kashyap</title>
+    <meta
+      name="description"
+      content="Eleven gates, a Sent-folder-as-truth state design, and why a guessed email address is never worth the reply rate."
+    />
+    <meta property="og:title" content="Verum: an outreach agent that's only allowed to send what it can prove" />
+    <meta property="og:description" content="Eleven gates, a Sent-folder-as-truth state design, and why a guessed email address is never worth the reply rate." />
+    <meta property="og:type" content="article" />
+    <meta name="theme-color" content="#F6F1E7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16140F" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/blog/blog.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.setAttribute("data-theme", saved);
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <svg style="display: none" aria-hidden="true">
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.3A9 9 0 0 1 10.7 3a9 9 0 1 0 10.3 10.3Z" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5a1 1 0 0 1-1-1V1a1 1 0 1 1 2 0v1.5a1 1 0 0 1-1 1Zm0 19a1 1 0 0 1-1-1V20a1 1 0 1 1 2 0v1.5a1 1 0 0 1-1 1ZM22.5 13H21a1 1 0 1 1 0-2h1.5a1 1 0 1 1 0 2ZM3 13H1.5a1 1 0 1 1 0-2H3a1 1 0 1 1 0 2Zm16.4-7.9-1 1a1 1 0 1 1-1.5-1.4l1-1a1 1 0 0 1 1.5 1.4ZM6.1 18.4l-1 1a1 1 0 1 1-1.5-1.4l1-1a1 1 0 0 1 1.5 1.4Zm13.3 1-1-1a1 1 0 1 1 1.4-1.4l1 1a1 1 0 0 1-1.4 1.4ZM4.6 6.1l-1-1a1 1 0 0 1 1.4-1.4l1 1A1 1 0 0 1 4.6 6.1Z" /></symbol>
+    </svg>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a href="/#top" class="wordmark">harshita</a>
+        <nav class="nav-links">
+          <a href="/#work">work</a>
+          <a href="/blog/">writing</a>
+          <a href="/#contact">contact</a>
+          <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch colour theme">
+            <svg class="icon icon-moon"><use href="#i-moon" /></svg>
+            <svg class="icon icon-sun"><use href="#i-sun" /></svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <a class="back-link" href="/blog/">← back to writing</a>
+
+        <div class="post-eyebrow" style="margin-top: 1.4rem">Engineering deep dive</div>
+        <h1 class="post-title">Verum: an outreach agent that's only allowed to send what it can prove</h1>
+        <div class="post-meta">
+          <span>Sep 2026</span><span class="sep">·</span><span>8 min read</span>
+        </div>
+        <div class="post-tags">
+          <span class="pill">Claude agents</span>
+          <span class="pill">MCP</span>
+          <span class="pill">Scheduled routines</span>
+          <span class="pill">SPF / DKIM / DMARC</span>
+        </div>
+        <div class="post-links">
+          <a href="https://verum-pied.vercel.app/" target="_blank" rel="noopener">Landing page ↗</a>
+        </div>
+
+        <div class="prose">
+          <p>Most "AI outreach" tools are email generators wearing a sales pitch. You give them a company name, they invent a personalized-sounding paragraph, and you send it and hope. I didn't want to build that, mostly because I'd have to use it on my own company first, and I didn't want to be the one getting the fabricated-sounding email.</p>
+          <p>Verum is what I built instead: an agent that researches a company from primary sources, and is structurally incapable of sending an email unless every claim in it traces back to a source URL and every gate passes. If it can't prove something, it doesn't get to say it.</p>
+
+          <h2>Not a generator. An operator.</h2>
+          <p>The distinction sounds like semantics until you build it. A generator stops at "write me a cold email." An operator owns the whole loop: find the company, verify there's a real gap, find the right person, write to them, track the thread, follow up once, escalate a reply to me, and know when to stop. Most of the engineering effort is in the parts that aren't "write the email" — the email is the easy 10%.</p>
+          <p>Ranuvo, my own company, is customer zero. Dogfood it against real prospects, measure what I still had to do by hand, extract those manual steps into features, and only then think about turning it into a product for other people. Building the multi-tenant SaaS before knowing whether a single email gets a reply is the expensive way to find out it doesn't.</p>
+
+          <h2>The pipeline</h2>
+          <pre><code>discover → verify → research → draft → REVIEW → send → track → follow up
+                                 ▲                          │
+                                 └──────── escalate ─────────┘</code></pre>
+          <p><code>REVIEW</code> is a human gate — me — and it's not a placeholder for a feature I haven't built yet. It stays there permanently for anything the agent scores as low confidence, even after the rest of the pipeline is trusted.</p>
+          <p><strong>Finding the right person is the actual hard part.</strong> The agent doesn't look for "an email." It works out which function owns the problem it thinks it found — from leadership pages, filings, org structure — and treats absence as a signal too: no CIO on the executive page is <em>why</em> the target becomes finance instead of IT. Then it looks for a named individual, but only from sources it trusts enough to act on: a company's own leadership page or a filing is usable directly; a data broker or technographics site is a lead, never a confirmed contact, until something in tiers one through three backs it up.</p>
+          <p>Finding a route to that person follows the same rule. A published address on the company's own site, or a contact form — fine. Guessing <code>firstname.lastname@company.com</code> — never, under any circumstance, because a bounce from a guessed address costs domain reputation and a misdirected guess is worse. If no address can be verified, the record is marked blocked, not downgraded and sent anyway. Two of the first three companies worth writing to sat in exactly that blocked state, verified person, no verified way to reach them, and stayed there rather than getting a guessed send.</p>
+
+          <h2>Eleven gates, and any one of them can kill a send</h2>
+          <p>Before anything goes out, it has to clear all eleven: real fit for what Ranuvo actually sells, a sourced current problem (not an assumption), a dated reason to write now, a verified contact route, the right person, no pending acquisition or layoffs that make the timing wrong, never contacted before, not on the suppression list, no invented facts, an allowed country under that country's actual outreach law, and high confidence on every other gate — meaning if I had to argue for a gate rather than just confirm it, it doesn't count as passed.</p>
+          <p>If any gate is uncertain, the lead goes to REVIEW with the specific failing gate named next to it. That's a normal, expected outcome — not a failure of the run. On the first real batch of ten companies, three were disqualified once the agent worked out they'd already built the thing I would've pitched them. Pitching a company its own product is the fastest way to get ignored, and the agent found that out from public sources before a single email went out.</p>
+
+          <h2>State lives in git, not memory</h2>
+          <p>Runs happen as scheduled cloud jobs, not on my laptop, and each run starts from a completely fresh checkout with no memory of anything before it. So the first thing every run does is restore state from a dedicated git branch — pull it, check it out, and every send, every reply, every follow-up gets written back to that same branch and pushed before the run ends. If a run crashes mid-send, the next run reads exactly what happened, because it's committed, not held in a process that just died.</p>
+          <p>The actual safety net, though, is that the Sent folder itself is the source of truth on duplicates — not the state file. Immediately before every send, the agent searches Sent for that recipient's domain and cross-checks it against what the state file thinks happened. If they disagree, Sent wins, the state file gets corrected, and nothing gets sent to that company on that run. A crashed run can leave the state file wrong; it can't make the mailbox lie about what it already sent.</p>
+
+          <h2>Replies end the agent's authority, not start it</h2>
+          <p>A reply classified <code>INTERESTED</code>, <code>HOT</code>, or <code>QUESTION</code> gets a drafted response — and then it stops. It doesn't send. It flags for me. The only replies the agent acts on unattended are the mechanical ones: an out-of-office pushes the follow-up date, a "wrong person" referral updates the contact record. Anything with actual judgment in it — pricing, a commitment, ambiguity — waits for a human, because that's almost every real reply.</p>
+          <p><code>NOT_INTERESTED</code> is the one exception that runs immediately and without waiting: straight to the suppression list, before anything else happens, no exceptions. An agent that keeps following up after someone says no is worse than no agent. That's not a compliance line I added for the readme — it's the actual design constraint the rest of the reply-handling logic is built around.</p>
+
+          <h2>What it looks like from the outside</h2>
+          <p>One digest a day, built from the state store rather than the mailbox, so it renders the same regardless of which provider is plugged in behind it:</p>
+          <pre><code>NEEDS YOU (2)
+  • Company A — draft ready, no verified contact. Blocked 3 days.
+  • Company B — reply classified INTERESTED. Not auto-answered.
+
+SENT (0) — sending disabled this run
+
+FOLLOW-UPS DUE (1)
+  • Company C — due, first follow-up
+
+QUEUE
+  2 CONTACT · 5 HOLD · 3 SKIP</code></pre>
+          <p>Things that need a decision come first, on purpose, because the summary has to be readable on a phone in fifteen seconds, not read like a log file.</p>
+          <p>The landing page is the only part of this that's public. Everything above it — prospect research, contact records, the mailbox, the send log — stays in a private repo, because none of that should ever be something a link can accidentally expose.</p>
+        </div>
+
+        <div class="post-footer">
+          <a class="back-link" href="/blog/">← all posts</a>
+          <a class="back-link" href="/#contact">get in touch →</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <span>© 2026 Harshita Kashyap</span>
+        <span>Built and deployed by hand</span>
+      </div>
+    </footer>
+
+    <script>
+      function activeTheme() {
+        return (
+          document.documentElement.getAttribute("data-theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        );
+      }
+      var toggle = document.getElementById("themeToggle");
+      if (toggle) {
+        toggle.addEventListener("click", function () {
+          var next = activeTheme() === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          try { localStorage.setItem("theme", next); } catch (e) {}
+        });
+      }
+    </script>
+  </body>
+</html>

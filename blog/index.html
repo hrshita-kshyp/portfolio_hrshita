@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Building in public — Harshita Kashyap</title>
+    <meta
+      name="description"
+      content="Engineering deep dives on DataSync, Verum, and ApplyWise — written by Harshita Kashyap."
+    />
+    <meta name="theme-color" content="#F6F1E7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16140F" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/blog/blog.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.setAttribute("data-theme", saved);
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <svg style="display: none" aria-hidden="true">
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.3A9 9 0 0 1 10.7 3a9 9 0 1 0 10.3 10.3Z" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5a1 1 0 0 1-1-1V1a1 1 0 1 1 2 0v1.5a1 1 0 0 1-1 1Zm0 19a1 1 0 0 1-1-1V20a1 1 0 1 1 2 0v1.5a1 1 0 0 1-1 1ZM22.5 13H21a1 1 0 1 1 0-2h1.5a1 1 0 1 1 0 2ZM3 13H1.5a1 1 0 1 1 0-2H3a1 1 0 1 1 0 2Zm16.4-7.9-1 1a1 1 0 1 1-1.5-1.4l1-1a1 1 0 0 1 1.5 1.4ZM6.1 18.4l-1 1a1 1 0 1 1-1.5-1.4l1-1a1 1 0 0 1 1.5 1.4Zm13.3 1-1-1a1 1 0 1 1 1.4-1.4l1 1a1 1 0 0 1-1.4 1.4ZM4.6 6.1l-1-1a1 1 0 0 1 1.4-1.4l1 1A1 1 0 0 1 4.6 6.1Z" /></symbol>
+    </svg>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a href="/#top" class="wordmark">harshita</a>
+        <nav class="nav-links">
+          <a href="/#work">work</a>
+          <a href="/blog/">writing</a>
+          <a href="/#contact">contact</a>
+          <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch colour theme">
+            <svg class="icon icon-moon"><use href="#i-moon" /></svg>
+            <svg class="icon icon-sun"><use href="#i-sun" /></svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <div class="post-eyebrow">Building in public</div>
+        <h1 class="post-title" style="font-size: clamp(2rem, 5vw, 2.6rem)">Writing</h1>
+        <p style="color: var(--muted); margin-top: 0.8rem; max-width: 60ch">
+          Engineering deep dives on the products I'm building — what the code actually
+          does, not the pitch version.
+        </p>
+
+        <div style="margin-top: clamp(2rem, 5vw, 3rem)">
+          <a class="post-card" href="/blog/verum-deep-dive">
+            <div class="post-card-title">Verum: an outreach agent that's only allowed to send what it can prove</div>
+            <p class="post-card-desc">Eleven gates, a Sent-folder-as-truth state design, and why a guessed email address is never worth the reply rate.</p>
+            <div class="post-card-meta">Sep 2026 · 8 min read</div>
+          </a>
+
+          <a class="post-card" href="/blog/applywise-deep-dive">
+            <div class="post-card-title">ApplyWise: the AI never gets to say something I didn't tell it</div>
+            <p class="post-card-desc">Local-first storage, a schema-enforced <code>needs_user_input</code>, and why it never clicks Submit.</p>
+            <div class="post-card-meta">Sep 2026 · 7 min read</div>
+          </a>
+
+          <a class="post-card" href="/blog/datasync-deep-dive">
+            <div class="post-card-title">DataSync: I built the wrong product first, on purpose</div>
+            <p class="post-card-desc">An alumni portal, one timestamp column, and the dry-run flag that saved me from mailing three hundred people by accident.</p>
+            <div class="post-card-meta">Sep 2026 · 6 min read</div>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <span>© 2026 Harshita Kashyap</span>
+        <span>Built and deployed by hand</span>
+      </div>
+    </footer>
+
+    <script>
+      function activeTheme() {
+        return (
+          document.documentElement.getAttribute("data-theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        );
+      }
+      var toggle = document.getElementById("themeToggle");
+      if (toggle) {
+        toggle.addEventListener("click", function () {
+          var next = activeTheme() === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          try { localStorage.setItem("theme", next); } catch (e) {}
+        });
+      }
+    </script>
+  </body>
+</html>

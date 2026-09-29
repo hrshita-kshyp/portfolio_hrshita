@@ -284,10 +284,6 @@
         color: var(--text);
       }
 
-      .nav-links a.nav-cta {
-        color: var(--accent);
-      }
-
       .theme-toggle {
         display: inline-flex;
         align-items: center;
@@ -391,6 +387,9 @@
         color: var(--line-strong);
       }
 
+      .status-item { display: inline-flex; align-items: baseline; gap: 0.4rem; }
+      .status-label { color: var(--text); font-weight: 600; }
+
       .actions {
         display: flex;
         flex-wrap: wrap;
@@ -422,17 +421,6 @@
 
       .btn-primary:hover {
         background: var(--accent-hover);
-      }
-
-      .btn-ghost {
-        border-color: var(--line-strong);
-        color: var(--text);
-        background: transparent;
-      }
-
-      .btn-ghost:hover {
-        border-color: var(--accent);
-        color: var(--accent);
       }
 
       .icon {
@@ -519,6 +507,46 @@
         margin-top: 1.1rem;
         max-width: 62ch;
         font-size: 1rem;
+      }
+
+      .featured-preview {
+        display: block;
+        margin: 0;
+        overflow: hidden;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        background: #f7faf7;
+        box-shadow: 0 20px 45px -32px color-mix(in srgb, var(--text) 55%, transparent);
+      }
+
+      .featured-preview img {
+        display: block;
+        width: 100%;
+        height: clamp(190px, 21vw, 250px);
+        object-fit: cover;
+        object-position: top center;
+        transition: transform 0.45s ease;
+      }
+
+      .featured-preview:hover img { transform: scale(1.015); }
+
+      .featured-meta { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 1.5rem; }
+
+      .featured-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: clamp(1.5rem, 3vw, 3rem);
+        align-items: center;
+        margin-top: 1.5rem;
+      }
+
+      .featured .featured-title { margin-top: 0; }
+      .featured .feature-list { grid-template-columns: 1fr; margin-top: 0; }
+      .featured-media { min-width: 0; }
+
+      @media (max-width: 860px) {
+        .featured-layout { grid-template-columns: 1fr; }
+        .featured-preview img { height: clamp(180px, 45vw, 260px); }
       }
 
       .feature-list {
@@ -623,37 +651,6 @@
         gap: 0.5rem 1rem;
       }
 
-      /* ---------- x timeline ---------- */
-      .timeline-panel {
-        border: 1px solid var(--line);
-        background: var(--surface);
-        border-radius: 4px;
-        padding: 0.75rem;
-        max-width: 560px;
-      }
-
-      .timeline-mount:empty+.timeline-loading {
-        display: block;
-      }
-
-      .timeline-loading,
-      .timeline-fallback {
-        font-family: var(--mono);
-        font-size: 0.8125rem;
-        color: var(--muted);
-        padding: 1.25rem 0.75rem;
-        margin: 0;
-      }
-
-      .timeline-loading {
-        display: none;
-      }
-
-      .timeline-fallback a {
-        text-decoration: underline;
-        text-underline-offset: 3px;
-      }
-
       /* ---------- writing ---------- */
       .post-list {
         display: flex;
@@ -710,6 +707,8 @@
       .skill-row:last-child {
         border-bottom: 1px solid var(--line);
       }
+
+      .skill-summary { max-width: 60ch; margin: -1.2rem 0 1.4rem; color: var(--muted); }
 
       .skill-label {
         font-family: var(--mono);
@@ -1016,10 +1015,6 @@
         transform: translateY(-2px);
       }
 
-      .btn-ghost {
-        background: var(--surface);
-      }
-
       /* Section kickers: coloured dash, like a magazine section label. */
       .eyebrow {
         display: flex;
@@ -1121,6 +1116,11 @@
         line-height: 1.2;
       }
 
+      .project-state { display: inline-flex; align-items: center; width: fit-content; padding: 0.3rem 0.65rem; border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line)); border-radius: 999px; background: var(--c-tint); color: var(--text); font: 600 0.67rem/1 var(--mono); letter-spacing: 0.09em; text-transform: uppercase; }
+      .featured .project-state::before { content: ""; width: 0.42rem; height: 0.42rem; margin-right: 0.42rem; border-radius: 50%; background: var(--sage); box-shadow: 0 0 0 4px var(--sage-tint); }
+      .past-work { padding-top: clamp(2.5rem, 6vw, 4.5rem); border-top: 1px dashed var(--line-strong); }
+      .past-work + .project-scroll .card { background: color-mix(in srgb, var(--surface) 72%, var(--bg)); }
+
       .featured-title {
         font-size: clamp(1.7rem, 3.4vw, 2.4rem);
         font-weight: 500;
@@ -1203,8 +1203,7 @@
         border-color: var(--sun);
       }
 
-      .gh-panel,
-      .timeline-panel {
+      .gh-panel {
         border-radius: 14px;
       }
 
@@ -1357,7 +1356,7 @@
       .section-head { max-width: 720px; }
       .section-title { text-wrap: balance; }
       .featured { padding: clamp(2rem, 5vw, 4rem); }
-      .featured::after { content: "LIVE / 01"; position: absolute; top: 1.5rem; right: 1.5rem; font: 0.68rem/1 var(--mono); letter-spacing: 0.12em; color: var(--muted); }
+      .featured::after { content: "CURRENT / 01"; position: absolute; top: 1.5rem; right: 1.5rem; font: 0.68rem/1 var(--mono); letter-spacing: 0.12em; color: var(--muted); }
       .card { min-height: 100%; }
       .card p + p { margin-top: 0.35rem; }
       .grid { align-items: stretch; }
@@ -1412,11 +1411,6 @@
       <symbol id="i-arrow-up-right" viewBox="0 0 24 24">
         <path d="M7 5h12v12h-2V8.4L6.4 19 5 17.6 15.6 7H7V5Z" />
       </symbol>
-      <symbol id="i-download" viewBox="0 0 24 24">
-        <path
-          d="M12 3v10.2l4.6-4.6L18 10l-6 6-6-6 1.4-1.4L12 13.2V3h0ZM4 19h16v2H4v-2Z"
-        />
-      </symbol>
       <symbol id="i-lock" viewBox="0 0 24 24">
         <path
           d="M12 2a5 5 0 0 1 5 5v2h2v13H5V9h2V7a5 5 0 0 1 5-5Zm3 7V7a3 3 0 1 0-6 0v2h6Z"
@@ -1440,9 +1434,6 @@
           <a href="#skills" data-optional>skills</a>
           <a href="#writing">writing</a>
           <a href="#contact">contact</a>
-          <a href="/resume.pdf" class="nav-cta" target="_blank" rel="noopener"
-            >résumé</a
-          >
           <button
             type="button"
             class="theme-toggle"
@@ -1468,17 +1459,17 @@
           <div class="hero-kicker">Engineer · maker · curious human</div>
           <h1 class="hero-name">Harshita<span>Kashyap</span></h1>
           <p class="hero-lede">
-            I'm a self-taught full-stack engineer who ships AI-powered products
-            end-to-end — architecture, prompt engineering, frontend, backend,
-            deployment.
+            I turn messy, repetitive workflows into focused software people can
+            trust — from product architecture and AI systems to the interface
+            and production deployment.
           </p>
           <div class="status">
             <span class="dot"></span>
-            <span>Building Ranuvo</span>
+            <span class="status-item"><span class="status-label">Now</span> ApplyWise</span>
             <span class="sep">·</span>
-            <span>Building ApplyWise</span>
+            <span class="status-item"><span class="status-label">Founder</span> Ranuvo</span>
             <span class="sep">·</span>
-            <span>Open to full-time remote roles</span>
+            <span>Open to remote roles</span>
           </div>
           <div class="actions">
             <a href="#work" class="btn btn-primary">
@@ -1487,26 +1478,15 @@
                 <use href="#i-arrow-down" />
               </svg>
             </a>
-            <a
-              href="/resume.pdf"
-              class="btn btn-ghost"
-              target="_blank"
-              rel="noopener"
-            >
-              Download Resume
-              <svg class="icon">
-                <use href="#i-download" />
-              </svg>
-            </a>
           </div>
           </div>
           <div class="hero-stage" aria-hidden="true">
             <div class="orbit"></div>
             <div class="builder-card">
               <div class="window-dots"><i></i><i></i><i></i></div>
-              <div class="builder-label">Currently exploring</div>
-              <h2>Human ideas,<br />shipped with AI.</h2>
-              <p>From blank canvas to a working product — I care about the details in between.</p>
+              <div class="builder-label">Product-minded engineering</div>
+              <h2>Useful software,<br />built end to end.</h2>
+              <p>I shape the problem, build the system, and sweat the details that earn user trust.</p>
               <div class="builder-stack"><span></span><span></span><span></span></div>
             </div>
             <span class="floating-note note-one">✦ building ApplyWise</span>
@@ -1519,36 +1499,37 @@
       <section id="work">
         <div class="wrap">
           <div class="section-head reveal">
-            <div class="eyebrow">Featured</div>
-            <h2 class="section-title">What I'm building right now</h2>
+            <div class="eyebrow">Current focus</div>
+            <h2 class="section-title">Building now</h2>
           </div>
 
           <article class="featured reveal">
-            <a
-              class="pill"
-              style="display: inline-flex; width: fit-content"
-              href="https://ranuvo.tech"
-              target="_blank"
-              rel="noopener"
-              >A Ranuvo product ↗</a
-            >
-            <h3 class="featured-title">
-              ApplyWise — Your Job Application Copilot
-            </h3>
-            <p class="featured-tagline">
-              "Apply smarter. Stay in control."
-            </p>
+            <div class="featured-meta">
+              <div class="project-state">In active development</div>
+              <a class="pill" href="https://ranuvo.tech" target="_blank" rel="noopener">A Ranuvo product ↗</a>
+            </div>
+            <h3 class="featured-title">ApplyWise — Your Job Application Copilot</h3>
+            <p class="featured-tagline">"Apply smarter. Stay in control."</p>
             <p class="featured-desc">
               A local-first Chrome extension that reads your résumé, evaluates
               your fit for a role, and takes the repetition out of ATS forms —
               while keeping every important decision in your hands.
             </p>
-            <ul class="feature-list">
-              <li>Explains role fit, strengths, and missing qualifications</li>
-              <li>Fills repetitive ATS fields and attaches your résumé</li>
-              <li>Answer Memory reuses responses only after approval</li>
-              <li>Never stores sensitive fields or clicks Submit</li>
-            </ul>
+            <div class="featured-layout">
+              <div>
+                <ul class="feature-list">
+                  <li>Explains role fit, strengths, and missing qualifications</li>
+                  <li>Fills repetitive ATS fields and attaches your résumé</li>
+                  <li>Answer Memory reuses responses only after approval</li>
+                  <li>Never stores sensitive fields or clicks Submit</li>
+                </ul>
+              </div>
+              <div class="featured-media">
+                <a class="featured-preview" href="https://get-applywise.vercel.app/" target="_blank" rel="noopener" aria-label="Open the ApplyWise website">
+                  <img src="/assets/applywise-preview.png" alt="ApplyWise website preview showing its job application copilot" width="1440" height="1000" />
+                </a>
+              </div>
+            </div>
             <div class="pills">
               <span class="pill">Chrome MV3</span>
               <span class="pill">JavaScript</span>
@@ -1556,69 +1537,27 @@
               <span class="pill">Local-first</span>
             </div>
             <div class="links">
-              <a
-                class="link"
-                href="https://get-applywise.vercel.app/"
-                target="_blank"
-                rel="noopener"
-              >
-                Join the beta
-                <svg class="icon">
-                  <use href="#i-arrow-up-right" />
-                </svg>
+              <a class="link" href="https://get-applywise.vercel.app/" target="_blank" rel="noopener">
+                Join the beta <svg class="icon"><use href="#i-arrow-up-right" /></svg>
               </a>
               <a class="link" href="/blog/applywise-deep-dive">
-                Engineering deep dive
-                <svg class="icon">
-                  <use href="#i-arrow-up-right" />
-                </svg>
+                Engineering deep dive <svg class="icon"><use href="#i-arrow-up-right" /></svg>
               </a>
             </div>
           </article>
 
           <div
-            class="section-head reveal"
+            class="section-head reveal past-work"
             style="margin-top: clamp(3rem, 6vw, 4.5rem)"
           >
-            <div class="eyebrow">Projects</div>
-            <h2 class="section-title">Other things I've shipped</h2>
+            <div class="eyebrow">Selected work</div>
+            <h2 class="section-title">Previously shipped</h2>
           </div>
 
           <div class="project-scroll">
             <article class="card reveal">
-              <div class="card-cover">
-                <img
-                  src="/assets/ranuvo-preview.jpg"
-                  alt="Screenshot of the Ranuvo homepage"
-                  loading="lazy"
-                  width="1000"
-                  height="557"
-                />
-              </div>
-              <div class="card-index">00</div>
-              <h3>Ranuvo — My Company</h3>
-              <p>
-                Business technology, automation, and AI for companies whose
-                internal tools haven't kept up. ApplyWise and Verum are
-                Ranuvo products, built and shipped under it.
-              </p>
-              <div class="links">
-                <a
-                  class="link"
-                  href="https://ranuvo.tech"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Visit ranuvo.tech
-                  <svg class="icon">
-                    <use href="#i-arrow-up-right" />
-                  </svg>
-                </a>
-              </div>
-            </article>
-
-            <article class="card reveal">
               <div class="card-index">01</div>
+              <div class="project-state">Shipped</div>
               <h3>Verum — Outreach Agent</h3>
               <p>
                 Sends only what it can prove — a named decision-maker, a
@@ -1626,8 +1565,7 @@
                 every send.
               </p>
               <p>
-                Runs unattended, state on a git branch. Being tested on my
-                own company,
+                Runs unattended, state on a git branch. Being tested at
                 <a href="https://ranuvo.tech" target="_blank" rel="noopener"
                   >Ranuvo</a
                 >, first.
@@ -1661,6 +1599,7 @@
 
             <article class="card reveal">
               <div class="card-index">02</div>
+              <div class="project-state">Shipped</div>
               <h3>Vyntra — AI Health Intelligence</h3>
               <p>
                 Turns biometric data into a BioAge score and clear,
@@ -1789,7 +1728,6 @@
         </div>
       </section>
 
-      <!-- ---------- x timeline ---------- -->
       <!-- ---------- writing ---------- -->
       <section id="writing">
         <div class="wrap">
@@ -1810,7 +1748,7 @@
                 Eleven gates, a Sent-folder-as-truth state design, and why a
                 guessed email address is never worth the reply rate.
               </p>
-              <div class="post-row-meta">Sep 2026 · 5 min read</div>
+              <div class="post-row-meta">Project: Aug 2025 · 5 min read</div>
             </a>
             <a class="post-row" href="/blog/applywise-deep-dive">
               <div class="post-row-title">
@@ -1822,7 +1760,7 @@
                 <code>needs_user_input</code>, and why it never clicks
                 Submit.
               </p>
-              <div class="post-row-meta">Sep 2026 · 4 min read</div>
+              <div class="post-row-meta">Project: Sep 2026 · 4 min read</div>
             </a>
             <a class="post-row" href="/blog/datasync-deep-dive">
               <div class="post-row-title">
@@ -1832,44 +1770,8 @@
                 An alumni portal, one timestamp column, and the dry-run flag
                 that saved me from mailing three hundred people by accident.
               </p>
-              <div class="post-row-meta">Sep 2026 · 3 min read</div>
+              <div class="post-row-meta">Project: Oct 2025 · 3 min read</div>
             </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- ---------- x timeline ---------- -->
-      <section id="posts">
-        <div class="wrap">
-          <div class="section-head reveal">
-            <div class="eyebrow">Latest</div>
-            <h2 class="section-title">Building in public</h2>
-            <p class="section-lede">Recent posts from @hrshita_kshyp.</p>
-          </div>
-          <div class="timeline-panel reveal">
-            <div class="timeline-mount" id="xTimeline">
-              <a
-                class="twitter-timeline"
-                href="https://twitter.com/hrshita_kshyp"
-                data-height="480"
-                data-chrome="noheader nofooter transparent"
-                data-dnt="true"
-              >Posts by @hrshita_kshyp</a>
-            </div>
-            <p class="timeline-loading">Loading posts from X…</p>
-            <p class="timeline-fallback" id="xFallback" hidden>
-              X didn't load — it's often blocked by tracking protection.
-              <a href="https://x.com/hrshita_kshyp" target="_blank" rel="noopener"
-                >Read @hrshita_kshyp on X ↗</a
-              >
-            </p>
-            <noscript>
-              <p class="timeline-fallback">
-                <a href="https://x.com/hrshita_kshyp" target="_blank" rel="noopener"
-                  >Read @hrshita_kshyp on X ↗</a
-                >
-              </p>
-            </noscript>
           </div>
         </div>
       </section>
@@ -1879,81 +1781,62 @@
         <div class="wrap">
           <div class="section-head reveal">
             <div class="eyebrow">Stack</div>
-            <h2 class="section-title">What I work with</h2>
+            <h2 class="section-title">Tools I ship with</h2>
           </div>
+          <p class="skill-summary reveal">
+            I choose the smallest dependable stack for the problem. These are
+            the tools I reach for most often, not an exhaustive inventory.
+          </p>
           <div class="reveal">
             <div class="skill-row">
-              <div class="skill-label">frontend</div>
+              <div class="skill-label">product &amp; frontend</div>
               <div class="skill-tags">
                 <span class="tag">React</span>
                 <span class="tag">Angular</span>
-                <span class="tag">JavaScript</span>
                 <span class="tag">TypeScript</span>
                 <span class="tag">Tailwind</span>
-                <span class="tag">HTML/CSS</span>
               </div>
             </div>
             <div class="skill-row">
-              <div class="skill-label">backend &amp; apis</div>
+              <div class="skill-label">systems &amp; data</div>
               <div class="skill-tags">
                 <span class="tag">Node.js</span>
-                <span class="tag">Express</span>
                 <span class="tag">REST APIs</span>
                 <span class="tag">OAuth 2.0</span>
-                <span class="tag">QuickBooks API</span>
-                <span class="tag">Stripe API</span>
-                <span class="tag">Zoho Deluge</span>
+                <span class="tag">PostgreSQL</span>
+                <span class="tag">Supabase</span>
+                <span class="tag">Redis</span>
               </div>
             </div>
             <div class="skill-row">
-              <div class="skill-label">ai</div>
+              <div class="skill-label">ai &amp; delivery</div>
               <div class="skill-tags">
                 <span class="tag">Claude agents</span>
                 <span class="tag">MCP</span>
                 <span class="tag">OpenAI API</span>
-                <span class="tag">Groq / Llama 3.3</span>
-                <span class="tag">Gemini API</span>
-                <span class="tag">Prompt engineering</span>
                 <span class="tag">LLM integrations</span>
-              </div>
-            </div>
-            <div class="skill-row">
-              <div class="skill-label">data</div>
-              <div class="skill-tags">
-                <span class="tag">PostgreSQL</span>
-                <span class="tag">Supabase</span>
-                <span class="tag">MongoDB</span>
-                <span class="tag">Redis</span>
-                <span class="tag">MySQL</span>
-                <span class="tag">Firebase</span>
-              </div>
-            </div>
-            <div class="skill-row">
-              <div class="skill-label">infra</div>
-              <div class="skill-tags">
                 <span class="tag">Docker</span>
                 <span class="tag">AWS</span>
                 <span class="tag">Vercel</span>
-                <span class="tag">CI/CD</span>
-                <span class="tag">Git</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ---------- client work (demoted) ---------- -->
+      <!-- ---------- client work through Ranuvo ---------- -->
       <section id="client-work">
         <div class="wrap">
           <div class="section-head reveal">
-            <div class="eyebrow">Independent</div>
+            <div class="eyebrow">Ranuvo · client work</div>
             <h2 class="section-title">
-              Also available for independent client work
+              Client systems built at Ranuvo
             </h2>
             <p class="section-lede">
-              Alongside my own products, I build internal tools, dashboards, and
-              integrations for independent clients. Most of it is private —
-              here's the shape of it.
+              Through <a href="https://ranuvo.tech" target="_blank" rel="noopener">Ranuvo</a>,
+              I build automation, internal tools, dashboards, integrations, and
+              practical AI systems around how a business actually works. Most
+              client systems are private — here's the shape of a few.
             </p>
           </div>
           <div class="reveal">
@@ -2028,8 +1911,9 @@
             <div class="eyebrow">Contact</div>
             <h2 class="section-title">Get in touch</h2>
             <p class="section-lede">
-              Open to full-time remote engineering roles, and to independent
-              client work. Either way, say hello.
+              Open to full-time remote engineering roles. For business software,
+              automation, or AI work, talk to me through
+              <a href="https://ranuvo.tech" target="_blank" rel="noopener">Ranuvo</a>.
             </p>
           </div>
           <div class="contact-grid">
@@ -2162,75 +2046,6 @@
           /* private mode — theme just won't persist */
         }
       });
-
-      // X timeline. Third-party and frequently blocked, so it loads only when
-      // the section is near the viewport and always resolves to something
-      // visible — the embed, or a plain link to the profile.
-      const xMount = document.getElementById("xTimeline");
-      const xFallback = document.getElementById("xFallback");
-      let xScriptRequested = false;
-      let xPollTimer = null;
-
-      // Only an iframe confirms that X actually rendered the timeline.
-      function timelineRendered() {
-        return Boolean(xMount.querySelector("iframe"));
-      }
-
-      function watchTimeline() {
-        const deadline = Date.now() + 20000;
-        clearInterval(xPollTimer);
-
-        xPollTimer = setInterval(() => {
-          if (timelineRendered()) {
-            xFallback.hidden = true;
-            clearInterval(xPollTimer);
-          } else if (Date.now() > deadline) {
-            xFallback.hidden = false;
-            clearInterval(xPollTimer);
-          }
-        }, 500);
-      }
-
-      function showTimelineFallback() {
-        clearInterval(xPollTimer);
-        if (!timelineRendered()) xFallback.hidden = false;
-      }
-
-      function loadTimelineScript() {
-        if (xScriptRequested) return;
-        xScriptRequested = true;
-
-        const timelineLink = xMount.querySelector(".twitter-timeline");
-        timelineLink.dataset.theme = activeTheme();
-
-        const script = document.createElement("script");
-        script.src = "https://platform.twitter.com/widgets.js";
-        script.async = true;
-        script.onload = () => {
-          if (window.twttr?.widgets) window.twttr.widgets.load(xMount);
-          watchTimeline();
-        };
-        script.onerror = showTimelineFallback;
-        document.head.appendChild(script);
-
-        // Blocked requests can hang rather than error — don't leave a dead box.
-        setTimeout(showTimelineFallback, 20000);
-      }
-
-      if ("IntersectionObserver" in window) {
-        const xObserver = new IntersectionObserver(
-          (entries) => {
-            if (entries[0].isIntersecting) {
-              xObserver.disconnect();
-              loadTimelineScript();
-            }
-          },
-          { rootMargin: "500px" },
-        );
-        xObserver.observe(document.getElementById("posts"));
-      } else {
-        loadTimelineScript();
-      }
 
       // Fade sections in as they enter the viewport.
       const reduceMotion = window.matchMedia(

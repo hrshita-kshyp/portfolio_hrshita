@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Serve the site (index.html, resume.pdf, images) from the project root
+// Serve the site and its assets from the project root
 app.use(express.static(path.join(__dirname)));
 
 app.get('/', (req, res) => {

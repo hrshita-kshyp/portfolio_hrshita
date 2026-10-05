@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rethinking agentic RAG: what if retrieval didn't start with embeddings? — Harshita Kashyap</title>
+    <meta
+      name="description"
+      content="A paper breakdown and a working FastAPI implementation: letting the LLM write boolean retrieval expressions against an inverted index instead of reaching for a vector store first."
+    />
+    <meta property="og:title" content="Rethinking agentic RAG: what if retrieval didn't start with embeddings?" />
+    <meta property="og:description" content="A paper breakdown and a working FastAPI implementation: letting the LLM write boolean retrieval expressions against an inverted index instead of reaching for a vector store first." />
+    <meta property="og:type" content="article" />
+    <meta name="theme-color" content="#F6F1E7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16140F" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/blog/blog.css" />
+    <style>
+      /* local to this post: the side-by-side retrieval trace */
+      .trace-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
+      .trace-tab {
+        font-family: var(--mono);
+        font-size: 0.78rem;
+        padding: 0.4rem 0.8rem;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .trace-tab[aria-selected="true"] { border-color: var(--accent); color: var(--accent); background: var(--tint); }
+      .trace-panel[hidden] { display: none; }
+      .prose h3 {
+        font-family: var(--sans);
+        font-size: 1.02rem;
+        font-weight: 600;
+        margin-top: 2rem;
+      }
+      .refs { font-size: 0.95rem; }
+      .note {
+        border-left: 2px solid var(--line-strong);
+        padding-left: 1rem;
+        color: var(--muted);
+        font-size: 0.97rem;
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.setAttribute("data-theme", saved);
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <svg style="display: none" aria-hidden="true">
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.3A9 9 0 0 1 10.7 3a9 9 0 1 0 10.3 10.3Z" /></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-13.5a1 1 0 0 1-1-1V1a1 1 0 1 1 2 0v1.5a1 1 0 0 1-1 1Zm0 19a1 1 0 0 1-1-1V20a1 1 0 1 1 2 0v1.5a1 1 0 0 1-1 1ZM22.5 13H21a1 1 0 1 1 0-2h1.5a1 1 0 1 1 0 2ZM3 13H1.5a1 1 0 1 1 0-2H3a1 1 0 1 1 0 2Zm16.4-7.9-1 1a1 1 0 1 1-1.5-1.4l1-1a1 1 0 0 1 1.5 1.4ZM6.1 18.4l-1 1a1 1 0 1 1-1.5-1.4l1-1a1 1 0 0 1 1.5 1.4Zm13.3 1-1-1a1 1 0 1 1 1.4-1.4l1 1a1 1 0 0 1-1.4 1.4ZM4.6 6.1l-1-1a1 1 0 0 1 1.4-1.4l1 1A1 1 0 0 1 4.6 6.1Z" /></symbol>
+    </svg>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a href="/#top" class="wordmark">harshita</a>
+        <nav class="nav-links">
+          <a href="/#work">work</a>
+          <a href="/blog/">writing</a>
+          <a href="/#contact">contact</a>
+          <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch colour theme">
+            <svg class="icon icon-moon"><use href="#i-moon" /></svg>
+            <svg class="icon icon-sun"><use href="#i-sun" /></svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <a class="back-link" href="/blog/">← back to writing</a>
+
+        <div class="post-eyebrow" style="margin-top: 1.4rem">Paper breakdown</div>
+        <h1 class="post-title">Rethinking agentic RAG: what if retrieval didn't start with embeddings?</h1>
+        <div class="post-meta">
+          <span>Oct 2026</span><span class="sep">·</span><span>12 min read</span>
+        </div>
+        <div class="post-tags">
+          <span class="pill">RAG</span>
+          <span class="pill">BM25 / inverted index</span>
+          <span class="pill">Python</span>
+          <span class="pill">FastAPI</span>
+          <span class="pill">arXiv:2605.27123</span>
+        </div>
+
+        <div class="prose">
+          <p>Every RAG system I've built started the same way: chunk the corpus, embed the chunks, push them into a vector store, embed the question at query time, take the top <em>k</em> by cosine similarity. That sequence is so standard it stopped looking like a design decision. It's just what step one <em>is</em>.</p>
+          <p>A paper from May 2026 — <em>Rethinking Agentic RAG: Toward LLM-Driven Logical Retrieval Beyond Embeddings</em> — argues that step one is load-bearing in a way we don't examine, and that if your LLM is already strong enough to run a multi-turn retrieval loop, you can delete the embedding layer entirely and hand it a boolean query language over a plain inverted index instead. Their system, LogicalRAG, matches a dense+sparse hybrid baseline on accuracy while building the index 41× faster.</p>
+          <p>This is my read of it, plus the smallest version of the idea I could get running on my own machine.</p>
+
+          <h2>Why this one caught my attention</h2>
+          <p>Because the RAG failure I keep hitting isn't a ranking failure. It's that semantic similarity and actual information need are two different things, and the gap between them is where the complexity budget goes.</p>
+          <p>Ask "which of our enterprise customers churned <em>before</em> the pricing change?" and a vector search happily returns passages about enterprise customers, about churn, about pricing changes. All three topics are present. The <em>conjunction</em> — and especially the negation, and especially the ordering — is not something a single 1536-dimensional point can carry. Cosine similarity has no operator for "and also not this."</p>
+          <p>So the standard fix is to add layers. Hybrid search, because BM25 catches the exact terms dense retrieval smears. A reranker, because the fused top-50 is noisy. A knowledge graph, because multi-hop questions need structure the embeddings threw away. Query decomposition on top, because one question is really three. Each layer is defensible on its own, and the stack as a whole becomes something you can't debug — when an answer is wrong, the culprit could be the chunker, the embedding model, the fusion weights, the reranker, or the prompt.</p>
+          <p class="note">The uncomfortable part: every one of those layers exists to recover intent that the embedding step discarded. We compress a precise question into a lossy vector, then spend the rest of the pipeline trying to reconstruct what we lost.</p>
+
+          <h2>What the paper actually proposes</h2>
+          <p>Invert the division of labour. Don't make the retrieval system guess at intent — make the LLM <em>state</em> it, in a language the retrieval system can execute exactly.</p>
+          <p>The model doesn't emit a string to be embedded. It emits a logical expression: boolean operators with grouping, quoted phrases for exact matching, field targeting, and term boosting.</p>
+          <pre><code>AND / OR / NOT          boolean composition, parenthesised
+"exact phrase"          phrase match, order preserved
+title:Vivaldi           field-scoped constraint
+opera^2                 term boost
+default_operator=OR     tunable per query</code></pre>
+          <p>The backend underneath is deliberately boring: a standard inverted index — OpenSearch in their implementation — with BM25 ranking at the default parameters (k₁=1.2, b=0.75). The logical expression decides <em>which</em> documents are candidates at all; BM25 only orders the ones that already satisfy the constraints.</p>
+          <p>That split is the whole argument. Intent is executed faithfully, and ranking becomes a separate, smaller problem. When retrieval goes wrong you can look at the expression and see <em>why</em>, which is not a thing you can do with a vector.</p>
+
+          <h2>Traditional agentic RAG vs. this</h2>
+          <pre><code>AGENTIC HYBRID (baseline)
+
+  question
+     |
+     v
+  LLM rewrites query
+     |
+     +--> embed --> ANN search --+
+     |                           +--> RRF fuse --> rerank --> top-k
+     +--> BM25 ------------------+                             |
+                                                               v
+                              LLM reads passages, maybe loops, answers
+
+
+LOGICALRAG
+
+  question
+     |
+     v
+  LLM writes logical expression  <-------------------------+
+     |     (title:X AND "exact phrase") NOT Y              |
+     v                                                     |
+  inverted index: constraint filter --> BM25 rank          |
+     |                                                     |
+     +--> passages + hit count ----------------------------+
+     |
+     v
+   0 hits    ->  relax a constraint
+   too many  ->  add one
+   enough    ->  answer, or abstain if evidence absent</code></pre>
+          <p>Same agentic shape — multiple turns, refinement based on intermediate results. What changes is that the refinement signal is now <em>legible</em>. "Zero documents matched this conjunction" is information. "The top-5 cosine neighbours were 0.71, 0.70, 0.69" is not: you can't tell from it whether the evidence is missing or just worded differently.</p>
+
+          <h2>The loop, step by step</h2>
+          <ol>
+            <li><strong>Plan.</strong> The model states what evidence would answer the question — not the query yet, the evidence requirement.</li>
+            <li><strong>Formulate.</strong> That requirement becomes a logical expression. Entities become field-scoped terms; distinguishing details become quoted phrases; distractors it wants excluded become <code>NOT</code> clauses.</li>
+            <li><strong>Execute.</strong> The index returns ranked passages from the candidate set that satisfies the constraints — plus a hit count.</li>
+            <li><strong>Observe.</strong> The model reads what came back and checks it against the evidence requirement from step 1.</li>
+            <li><strong>Refine or answer.</strong> Zero hits triggers constraint relaxation. A flood of weakly-related hits triggers a tighter conjunction. Enough evidence ends the loop. The paper caps it at eight turns.</li>
+          </ol>
+          <p>Step 5 has a fourth exit that I think is the most interesting result in the paper: <em>abstain</em>. If repeated, progressively relaxed expressions keep coming back empty, that's a far stronger signal that the corpus simply doesn't contain the answer than anything you get from dense retrieval — where every query returns its top <em>k</em> no matter what, with a similarity score that looks about the same whether the evidence exists or not.</p>
+
+          <h2>A concrete comparison</h2>
+          <p>Take a question with a conjunction and a negation in it. Here's what each path actually does:</p>
+
+          <div class="trace-tabs" role="tablist" aria-label="Retrieval approach">
+            <button class="trace-tab" role="tab" id="tab-vector" aria-controls="panel-vector" aria-selected="true">Vector RAG</button>
+            <button class="trace-tab" role="tab" id="tab-logical" aria-controls="panel-logical" aria-selected="false">Logical retrieval</button>
+          </div>
+
+          <div class="trace-panel" id="panel-vector" role="tabpanel" aria-labelledby="tab-vector">
+            <pre><code>Q: "Which Vivaldi operas had an Italian libretto but were
+    never staged in Venice?"
+
+embed(Q) --> [0.013, -0.228, 0.091, ... ]   (1536 dims)
+
+ANN search, top 5 by cosine:
+  0.84  "Vivaldi's operas premiered largely in Venice..."     <-- contradicts
+  0.82  "The libretto tradition of Italian baroque opera..."  <-- topical only
+  0.81  "Vivaldi composed over 40 operas, many for Venice"    <-- contradicts
+  0.79  "Venetian opera houses of the 1720s..."               <-- topical only
+  0.78  "Handel's Italian-libretto works in London..."        <-- wrong composer
+
+The NOT is invisible to cosine similarity. "Never staged in
+Venice" and "staged in Venice" sit near each other in the
+embedding space — the negation is a word, not a direction.
+
+Result: 3 of 5 passages argue the opposite of the question.
+The model either hedges, or confidently gets it wrong.</code></pre>
+          </div>
+
+          <div class="trace-panel" id="panel-logical" role="tabpanel" aria-labelledby="tab-logical" hidden>
+            <pre><code>Q: "Which Vivaldi operas had an Italian libretto but were
+    never staged in Venice?"
+
+turn 1 --> (title:Vivaldi AND opera AND "Italian libretto")
+               NOT Venice
+           hits: 0
+           -> constraint too tight; "Italian libretto" is my
+              phrasing, not necessarily the corpus's
+
+turn 2 --> (title:Vivaldi AND opera AND (libretto OR librettist))
+               NOT (Venice OR Venetian)
+           hits: 6
+           -> every passage is about a Vivaldi opera, mentions
+              its libretto, and does not mention Venice
+
+turn 3 --> answer from those 6, citing them
+           or: had turn 2 also returned 0, abstain —
+           three failed relaxations is evidence of absence,
+           not evidence of bad phrasing</code></pre>
+          </div>
+
+          <p>Note what the hit count did in turn 1. <code>0</code> was not a failure, it was a measurement: it told the model its own phrasing was the problem, and which clause to loosen. That diagnostic doesn't exist in the vector path.</p>
+
+          <h2>What the numbers say</h2>
+          <p>All figures below are the paper's, not mine. They evaluate at two scales: medium (HotpotQA ~9K passages, 2WikiMultiHopQA ~6K, MuSiQue ~11K, 1,000 questions each) and large (the KILT Wikipedia corpus). Baselines are Direct Answer with no retrieval, Agentic Hybrid (the same loop but with dense+sparse retrieval fused by RRF), HippoRAG2 (graph-based, medium scale only), and MA-RAG (multi-agent, embedding-based).</p>
+          <p>On KILT-scale accuracy, judged by LLM-as-judge:</p>
+          <table>
+            <thead><tr><th>System</th><th>Avg. accuracy</th></tr></thead>
+            <tbody>
+              <tr><td>LogicalRAG</td><td>0.717</td></tr>
+              <tr><td>Agentic Hybrid</td><td>0.716</td></tr>
+            </tbody>
+          </table>
+          <p>Parity. Pure lexical matching, no embedding model anywhere in the system, same accuracy as the hybrid stack. The accuracy result is the <em>uninteresting</em> half of the finding — it's what makes the other half admissible.</p>
+          <p>The other half, measured at KILT scale with 16 concurrent clients:</p>
+          <table>
+            <thead><tr><th>Metric</th><th>LogicalRAG</th><th>Agentic Hybrid</th></tr></thead>
+            <tbody>
+              <tr><td>Index construction</td><td>1.27 h</td><td>52.02 h</td></tr>
+              <tr><td>Throughput</td><td>152.5 QPS</td><td>66.6 QPS</td></tr>
+              <tr><td>Mean retrieval latency</td><td>74.9 ms</td><td>230.5 ms</td></tr>
+            </tbody>
+          </table>
+          <p>41× on build time, 2.3× on throughput, 3.1× on latency. The build-time gap is the one with real operational consequences: 52 hours of GPU-bound embedding isn't just a cost line, it's the reason chunking strategy becomes a quarterly decision instead of an afternoon experiment.</p>
+          <p>And the abstention result, from the answer-unavailable evaluation (400 examples per dataset with the gold passages deliberately removed):</p>
+          <table>
+            <thead><tr><th>Metric</th><th>LogicalRAG</th><th>Baseline</th></tr></thead>
+            <tbody>
+              <tr><td>Refusal rate</td><td>0.828</td><td>0.767</td></tr>
+              <tr><td>Hallucination rate</td><td>0.083</td><td>0.128</td></tr>
+            </tbody>
+          </table>
+          <p>Hallucinations roughly a third lower when the answer isn't in the corpus. The paper attributes this to exactly the mechanism above: repeated failure under explicit lexical constraints is a clear signal that the evidence is absent, and the model acts on it.</p>
+
+          <h2>Where I think this holds, and where it doesn't</h2>
+          <p>It holds when the question's precision lives in its terms. Entities, identifiers, dates, error codes, version numbers, API names, legal clause references, SKUs. Internal documentation search. Log and incident retrieval. Anything where the user already knows the vocabulary of the corpus — which, inside a company's own documents, they usually do. An inverted index is <em>better</em> than an embedding at <code>ERR_CONN_RESET</code> or <code>v2.14.3</code>, not merely cheaper; those tokens are near-noise to a semantic model.</p>
+          <p>It doesn't hold when the user's words and the corpus's words don't overlap at all. "Why do our users give up partway through?" against a corpus that only ever says "funnel abandonment" and "drop-off" is a vocabulary mismatch, and no boolean expression the model writes can bridge a gap it can't see. The paper is honest about this: embeddings remain better for highly abstract semantic matching and fuzzy association.</p>
+          <p>Which points at the actual design conclusion, and it isn't "embeddings are over." It's that the <em>default</em> is wrong. Starting with a vector store and bolting BM25 on when precision fails is backwards; starting with an inverted index and adding dense retrieval only for the queries that demonstrably need it gives you a system you can reason about, where the expensive layer has to justify itself. The paper's own stated limitation is the real constraint: the whole thing rests on the LLM's ability to formulate accurate logical queries. That ability is what changed recently — and it's why this is worth revisiting now rather than being a step backwards to 2010.</p>
+
+          <h2>Building the smallest version that runs</h2>
+          <p>Reading a paper and believing a paper are different activities, so I built the idea down to its skeleton: Python, FastAPI, and no OpenSearch — a hand-rolled inverted index, so there's nothing in the retrieval path I can't inspect.</p>
+          <p>Three pieces: an index that supports boolean expressions, an LLM that writes them, and a loop that uses the hit count as feedback.</p>
+
+          <h3>1. The index</h3>
+          <p>A posting list per token, plus a doc-length table for BM25. The constraint evaluator returns a <em>set</em> of doc ids; ranking happens only inside that set.</p>
+          <pre><code>from collections import defaultdict
+from dataclasses import dataclass, field
+import math, re
+
+TOKEN = re.compile(r"[a-z0-9_.]+")
+
+def tokenize(text: str) -&gt; list[str]:
+    return TOKEN.findall(text.lower())
+
+@dataclass
+class Index:
+    docs: dict[int, str] = field(default_factory=dict)
+    titles: dict[int, str] = field(default_factory=dict)
+    postings: dict[str, dict[int, int]] = field(default_factory=lambda: defaultdict(dict))
+    title_postings: dict[str, set[int]] = field(default_factory=lambda: defaultdict(set))
+    lengths: dict[int, int] = field(default_factory=dict)
+
+    def add(self, doc_id: int, title: str, body: str) -&gt; None:
+        self.docs[doc_id] = body
+        self.titles[doc_id] = title
+        toks = tokenize(body)
+        self.lengths[doc_id] = len(toks)
+        for t in toks:
+            self.postings[t][doc_id] = self.postings[t].get(doc_id, 0) + 1
+        for t in tokenize(title):
+            self.title_postings[t].add(doc_id)
+
+    @property
+    def avgdl(self) -&gt; float:
+        return sum(self.lengths.values()) / max(len(self.lengths), 1)
+
+    def match_term(self, term: str) -&gt; set[int]:
+        return set(self.postings.get(term, {}))
+
+    def match_field(self, fieldname: str, term: str) -&gt; set[int]:
+        if fieldname == "title":
+            return set(self.title_postings.get(term, set()))
+        return self.match_term(term)
+
+    def match_phrase(self, phrase: str) -&gt; set[int]:
+        # candidates must contain every token; then verify adjacency
+        toks = tokenize(phrase)
+        if not toks:
+            return set()
+        cands = self.match_term(toks[0])
+        for t in toks[1:]:
+            cands &amp;= self.match_term(t)
+        needle = " ".join(toks)
+        return {d for d in cands if needle in " ".join(tokenize(self.docs[d]))}
+
+    def bm25(self, query_terms: list[str], candidates: set[int],
+             k1: float = 1.2, b: float = 0.75) -&gt; list[tuple[int, float]]:
+        N, avgdl = len(self.docs), self.avgdl
+        scored: list[tuple[int, float]] = []
+        for doc_id in candidates:
+            score, dl = 0.0, self.lengths[doc_id]
+            for term in query_terms:
+                tf = self.postings.get(term, {}).get(doc_id, 0)
+                if not tf:
+                    continue
+                df = len(self.postings.get(term, {}))
+                idf = math.log(1 + (N - df + 0.5) / (df + 0.5))
+                score += idf * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * dl / avgdl))
+            scored.append((doc_id, score))
+        return sorted(scored, key=lambda p: p[1], reverse=True)</code></pre>
+          <p>Note <code>match_phrase</code>: intersect posting lists to get candidates, then verify adjacency only on those. Cheap, and it's why an exact phrase constraint is genuinely exact rather than a bag of words that happen to co-occur.</p>
+
+          <h3>2. Parsing the expression</h3>
+          <p>A recursive-descent parser over the operator set, compiling to set operations. <code>NOT</code> is a difference against the full doc set — which is the operation a vector store structurally cannot perform.</p>
+          <pre><code>import re as _re
+
+TOKEN_RE = _re.compile(r'\s*(\(|\)|AND|OR|NOT|"[^"]*"|[A-Za-z0-9_.:^]+)')
+
+def parse(expr: str, index: Index, default_or: bool = True) -&gt; tuple[set[int], list[str]]:
+    """Returns (matching doc ids, terms used for ranking)."""
+    tokens = TOKEN_RE.findall(expr)
+    pos = 0
+    terms: list[str] = []
+    all_docs = set(index.docs)
+
+    def peek() -&gt; str | None:
+        return tokens[pos] if pos &lt; len(tokens) else None
+
+    def atom() -&gt; set[int]:
+        nonlocal pos
+        tok = tokens[pos]; pos += 1
+        if tok == "(":
+            inner = expression()
+            if peek() == ")":
+                pos += 1
+            return inner
+        if tok == "NOT":
+            return all_docs - atom()
+        if tok.startswith('"'):
+            phrase = tok.strip('"')
+            terms.extend(tokenize(phrase))
+            return index.match_phrase(phrase)
+        tok = tok.split("^")[0]           # boosts are a ranking hint, ignored here
+        if ":" in tok:
+            fieldname, _, raw = tok.partition(":")
+            parts = tokenize(raw)
+            term = parts[0] if parts else ""
+            terms.append(term)
+            return index.match_field(fieldname, term)
+        parts = tokenize(tok)
+        term = parts[0] if parts else ""
+        terms.append(term)
+        return index.match_term(term)
+
+    def expression() -&gt; set[int]:
+        nonlocal pos
+        acc = atom()
+        while (nxt := peek()) and nxt != ")":
+            if nxt in ("AND", "OR"):
+                op = nxt; pos += 1
+                rhs = atom()
+                acc = acc &amp; rhs if op == "AND" else acc | rhs
+            else:                         # implicit operator between bare terms
+                rhs = atom()
+                acc = acc | rhs if default_or else acc &amp; rhs
+        return acc
+
+    return (expression() if tokens else set()), terms</code></pre>
+
+          <h3>3. The agent loop, behind FastAPI</h3>
+          <p>The model gets the operator grammar in its system prompt and the hit count back after every turn. That's the entire control signal.</p>
+          <pre><code>from fastapi import FastAPI
+from pydantic import BaseModel
+import anthropic, json
+
+app = FastAPI()
+client = anthropic.Anthropic()
+index = Index()           # populated at startup
+MAX_TURNS = 8
+
+SYSTEM = """You retrieve evidence by writing logical query expressions.
+
+Grammar:
+  AND OR NOT      boolean, parenthesisable
+  "exact phrase"  phrase match
+  title:term      field-scoped
+  term^2          boost
+
+After each query you are told the hit count.
+  0 hits          -&gt; your phrasing is too tight. Relax ONE clause
+                     (widen a phrase to OR'd synonyms, drop a NOT).
+  many weak hits  -&gt; add a constraint.
+  good evidence   -&gt; answer, citing doc ids.
+If three progressive relaxations all return 0 hits, say the corpus
+does not contain the answer. Do not answer from prior knowledge.
+
+Reply with JSON only:
+  {"action":"search","expr":"..."}
+  {"action":"answer","text":"...","cited":[ids]}
+  {"action":"abstain","reason":"..."}"""
+
+class Ask(BaseModel):
+    question: str
+    top_k: int = 5
+
+@app.post("/ask")
+def ask(req: Ask):
+    messages = [{"role": "user", "content": req.question}]
+    trace = []
+
+    for _ in range(MAX_TURNS):
+        reply = client.messages.create(
+            model="claude-sonnet-5-5",
+            max_tokens=1024,
+            system=SYSTEM,
+            messages=messages,
+        )
+        raw = reply.content[0].text
+        messages.append({"role": "assistant", "content": raw})
+        step = json.loads(raw)
+
+        if step["action"] == "answer":
+            return {"answer": step["text"], "cited": step["cited"], "trace": trace}
+        if step["action"] == "abstain":
+            return {"answer": None, "reason": step["reason"], "trace": trace}
+
+        doc_ids, terms = parse(step["expr"], index)
+        ranked = index.bm25(terms, doc_ids)[: req.top_k]
+        trace.append({"expr": step["expr"], "hits": len(doc_ids)})
+
+        passages = "\n\n".join(
+            f"[{d}] {index.titles[d]}: {index.docs[d][:600]}" for d, _ in ranked
+        )
+        messages.append({
+            "role": "user",
+            "content": f"hits: {len(doc_ids)}\n\n{passages or '(no documents matched)'}",
+        })
+
+    return {"answer": None, "reason": "turn limit reached", "trace": trace}</code></pre>
+          <p>The <code>trace</code> is the part I care about most. Every response carries the exact expressions that produced it and how many documents each one matched. When an answer is wrong I can read the retrieval reasoning as text — no embedding inspection, no fusion weights to second-guess.</p>
+
+          <h2>What breaks in production</h2>
+          <p>A demo that works on a clean corpus with a cooperative model is not a system. The gaps I'd have to close before putting this anywhere real:</p>
+          <ul>
+            <li><strong>Malformed expressions.</strong> Unbalanced parens, invented operators, a field name that doesn't exist. The parser above throws. Production needs it to return a structured parse error <em>back to the model</em> as another feedback turn — a bad expression is recoverable information, not a 500.</li>
+            <li><strong>Latency is now LLM-bound.</strong> Retrieval dropped to ~75 ms in the paper; a 3-turn loop is three sequential model calls. The index is no longer the bottleneck, the reasoning is. Cache the expression per normalised question — the same question shouldn't pay for formulation twice.</li>
+            <li><strong>Degenerate queries.</strong> A single common term as the whole expression matches half the corpus and BM25 then ranks noise. Worth rejecting expressions whose hit count exceeds some fraction of the index and asking for a tighter one.</li>
+            <li><strong>No fallback.</strong> The vocabulary-mismatch case is real, so after N empty relaxations the honest move is a dense-retrieval fallback — if one exists — before abstaining. Which means the embedding layer doesn't vanish; it becomes the escape hatch instead of the front door.</li>
+            <li><strong>Observability.</strong> The things I'd actually instrument: hit count per turn, turns per question, and abstention rate. If turns-per-question drifts upward, the corpus vocabulary and the users' vocabulary are diverging — and that's measurable here in a way it isn't in a vector pipeline.</li>
+            <li><strong>Stemming and synonyms.</strong> My <code>tokenize</code> is exact-match, so <em>libretto</em> and <em>librettos</em> are different tokens. An analyser with stemming and a synonym map does most of the semantic work people reach for embeddings to get — unglamorous, and it moves the needle more than a better embedding model would.</li>
+          </ul>
+
+          <h2>What I took from it</h2>
+          <p>Not "embeddings are dead" — the paper doesn't claim that, and its limitations section says the opposite. What I took is narrower and more useful: <strong>retrieval architecture doesn't have to grow more complex every time reasoning gets better.</strong> It can get simpler, because capability moved up the stack and the layers that existed to compensate for a weak orchestrator are now compensating for nothing.</p>
+          <p>The default I'm changing: when I start the next RAG system, the first thing I build is a plain inverted index with a good analyser and an honest boolean query path. Then I measure. Then the embedding layer has to earn its place by fixing queries I can show it failing on. That's the opposite of how I've done it every previous time, and I can't find the argument for the old order anymore.</p>
+
+          <hr />
+
+          <h2>Reference</h2>
+          <ul class="refs">
+            <li>
+              Yuqi Zeng, Qixiang Deng, Yulei Wan, Ruiquan Jiang, Xiaoqing Zheng, Xuanjing Huang.
+              <em>Rethinking Agentic RAG: Toward LLM-Driven Logical Retrieval Beyond Embeddings.</em>
+              arXiv:2605.27123, 26 May 2026.
+              <a href="https://arxiv.org/abs/2605.27123" target="_blank" rel="noopener">arxiv.org/abs/2605.27123 ↗</a>
+            </li>
+          </ul>
+          <p class="note">Every accuracy, latency, index-construction, refusal and hallucination figure quoted above is from that paper. The FastAPI implementation is my own minimal reconstruction of the idea, not the authors' code.</p>
+        </div>
+
+        <div class="post-footer">
+          <a class="back-link" href="/blog/">← all posts</a>
+          <a class="back-link" href="/#contact">get in touch →</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <span>© 2026 Harshita Kashyap</span>
+        <span>Built and deployed by hand</span>
+      </div>
+    </footer>
+
+    <script>
+      function activeTheme() {
+        return (
+          document.documentElement.getAttribute("data-theme") ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+        );
+      }
+      var toggle = document.getElementById("themeToggle");
+      if (toggle) {
+        toggle.addEventListener("click", function () {
+          var next = activeTheme() === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          try { localStorage.setItem("theme", next); } catch (e) {}
+        });
+      }
+
+      var tabs = Array.prototype.slice.call(document.querySelectorAll(".trace-tab"));
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          tabs.forEach(function (t) {
+            var selected = t === tab;
+            t.setAttribute("aria-selected", selected ? "true" : "false");
+            document.getElementById(t.getAttribute("aria-controls")).hidden = !selected;
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

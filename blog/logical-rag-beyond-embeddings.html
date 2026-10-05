@@ -99,9 +99,9 @@
         </div>
 
         <div class="prose">
-          <p>Every RAG system I've built started the same way: chunk the corpus, embed the chunks, push them into a vector store, embed the question at query time, take the top <em>k</em> by cosine similarity. That sequence is so standard it stopped looking like a design decision. It's just what step one <em>is</em>.</p>
+          <p>Nearly every RAG walkthrough, reference architecture and production write-up starts the same way: chunk the corpus, embed the chunks, push them into a vector store, embed the question at query time, take the top <em>k</em> by cosine similarity. That sequence is so standard it stopped looking like a design decision. It's just what step one <em>is</em>.</p>
           <p>A paper from May 2026 — <em>Rethinking Agentic RAG: Toward LLM-Driven Logical Retrieval Beyond Embeddings</em> — argues that step one is load-bearing in a way we don't examine, and that if your LLM is already strong enough to run a multi-turn retrieval loop, you can delete the embedding layer entirely and hand it a boolean query language over a plain inverted index instead. Their system, LogicalRAG, matches a dense+sparse hybrid baseline on accuracy while building the index 41× faster.</p>
-          <p>This is my read of it, plus the smallest version of the idea I could get running on my own machine.</p>
+          <p>This is my read of it, plus a sketch of the smallest implementation the idea reduces to — written while reading, to force myself to be concrete about what the architecture actually requires.</p>
 
           <h2>Why this one caught my attention</h2>
           <p>Because the RAG failure I keep hitting isn't a ranking failure. It's that semantic similarity and actual information need are two different things, and the gap between them is where the complexity budget goes.</p>
@@ -252,8 +252,8 @@ turn 3 --> answer from those 6, citing them
           <p>It doesn't hold when the user's words and the corpus's words don't overlap at all. "Why do our users give up partway through?" against a corpus that only ever says "funnel abandonment" and "drop-off" is a vocabulary mismatch, and no boolean expression the model writes can bridge a gap it can't see. The paper is honest about this: embeddings remain better for highly abstract semantic matching and fuzzy association.</p>
           <p>Which points at the actual design conclusion, and it isn't "embeddings are over." It's that the <em>default</em> is wrong. Starting with a vector store and bolting BM25 on when precision fails is backwards; starting with an inverted index and adding dense retrieval only for the queries that demonstrably need it gives you a system you can reason about, where the expensive layer has to justify itself. The paper's own stated limitation is the real constraint: the whole thing rests on the LLM's ability to formulate accurate logical queries. That ability is what changed recently — and it's why this is worth revisiting now rather than being a step backwards to 2010.</p>
 
-          <h2>Building the smallest version that runs</h2>
-          <p>Reading a paper and believing a paper are different activities, so I built the idea down to its skeleton: Python, FastAPI, and no OpenSearch — a hand-rolled inverted index, so there's nothing in the retrieval path I can't inspect.</p>
+          <h2>The smallest version the idea reduces to</h2>
+          <p>The fastest way to tell whether an architecture is genuinely simpler is to write it out and see how much code it takes. So: Python, FastAPI, and no OpenSearch — a hand-rolled inverted index, so there's nothing in the retrieval path that can't be inspected. What follows is the core of it; the fuller version is going into a public repo, and there's a note at the end on what's still to come.</p>
           <p>Three pieces: an index that supports boolean expressions, an LLM that writes them, and a loop that uses the hit count as feedback.</p>
 
           <h3>1. The index</h3>
@@ -452,7 +452,7 @@ def ask(req: Ask):
         })
 
     return {"answer": None, "reason": "turn limit reached", "trace": trace}</code></pre>
-          <p>The <code>trace</code> is the part I care about most. Every response carries the exact expressions that produced it and how many documents each one matched. When an answer is wrong I can read the retrieval reasoning as text — no embedding inspection, no fusion weights to second-guess.</p>
+          <p>The <code>trace</code> is the part that makes the argument. Every response carries the exact expressions that produced it and how many documents each one matched, so a wrong answer can be debugged by reading the retrieval reasoning as text — no embedding inspection, no fusion weights to second-guess. That property is the real case for this architecture, more than any of the benchmark numbers.</p>
 
           <h2>What breaks in production</h2>
           <p>A demo that works on a clean corpus with a cooperative model is not a system. The gaps I'd have to close before putting this anywhere real:</p>
@@ -480,7 +480,7 @@ def ask(req: Ask):
               <a href="https://arxiv.org/abs/2605.27123" target="_blank" rel="noopener">arxiv.org/abs/2605.27123 ↗</a>
             </li>
           </ul>
-          <p class="note">Every accuracy, latency, index-construction, refusal and hallucination figure quoted above is from that paper. The FastAPI implementation is my own minimal reconstruction of the idea, not the authors' code.</p>
+          <p class="note">Every accuracy, latency, index-construction, refusal and hallucination figure quoted above is from the paper, measured by its authors — none of them are mine. The Python and FastAPI code is my own reconstruction of the architecture, not the authors' implementation. I'm building it out into a full project — demo corpus, tests, and a reproducible side-by-side against a vector baseline — and I'll make the repo public and link it here, along with whatever numbers I measure myself.</p>
         </div>
 
         <div class="post-footer">
